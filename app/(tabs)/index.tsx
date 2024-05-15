@@ -1,10 +1,49 @@
-import { Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, SafeAreaView } from 'react-native';
+import { useState, useEffect } from 'react';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { getData, storeData } from '@/data/storage';
+import { CardData } from '@/types';
+import { Card } from '@/components/Card';
 
 export default function HomeScreen() {
+  const [items, setItems] = useState<CardData[]>([]);
+  const [allDebt, setAllDebt] = useState<number>(0);
+
+  const fetchData = async () => {
+    try {
+      const data = await getData();
+      console.log('data', data)
+      if (data) {
+        setItems(data);
+        const sumAllPayments = data.reduce((acc, { date, pay }) => {
+          return acc + pay
+        }, 0)
+        setAllDebt(sumAllPayments)
+      } else {
+        const x = [{
+          date: '15.05.2024',
+          pay: 145
+        }, {
+          date: '16.05.2024',
+          pay: 56
+        }]
+        storeData(x)
+        setItems(x)
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [])
+
+  console.log('itemsitemsitems', items);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#d8dca1', dark: '#6e6909' }}
@@ -15,15 +54,14 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Debt: {100} BYN</ThemedText>
+        <ThemedText type="title">All debt: {allDebt} BYN</ThemedText>
       </ThemedView>
 
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
+      <SafeAreaView>
+        {items.map((item) => <Card key={item.date} date={item.date} pay={item.pay} />)}
+      </SafeAreaView>
+
+      <ThemedText type="defaultSemiBold">Add pay</ThemedText>
     </ParallaxScrollView>
   );
 }
@@ -33,10 +71,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
   },
   coinsLogo: {
     height: 178,
