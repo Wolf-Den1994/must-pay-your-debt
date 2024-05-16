@@ -1,16 +1,19 @@
 import { Image, StyleSheet, SafeAreaView } from 'react-native';
 import { useState, useEffect } from 'react';
-
+import { useDispatch, useSelector } from 'react-redux';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { getData, storeData } from '@/data/storage';
+import { getData, storeData } from '@/utils/storage';
 import { CardData } from '@/types';
 import { Card } from '@/components/Card';
+import { RootState } from '@/store';
 
 export default function HomeScreen() {
   const [items, setItems] = useState<CardData[]>([]);
   const [allDebt, setAllDebt] = useState<number>(0);
+
+  const sumBenefits = useSelector((state: RootState) => state.benefits.sumBenefits)
 
   const fetchData = async () => {
     try {

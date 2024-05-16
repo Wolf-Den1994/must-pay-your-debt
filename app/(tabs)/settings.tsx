@@ -3,13 +3,14 @@ import { StyleSheet, Button, FlatList, TextInput, SafeAreaView, RefreshControl, 
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-
+import { useDispatch, useSelector } from 'react-redux';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { Benefit } from '@/types';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
+import { RootState } from '@/store';
+import { addBenefit } from '@/store/benefitsSlice';
 
 type AndroidMode = 'date' | 'time';
 
@@ -73,27 +74,18 @@ const ModalAddBenefit = ({ onClose }: ModalProps) => {
 }
 
 const startDate = new Date(2024, 0, 1) // 01 Jan 2024
-const sumBenefit = 651.35 // 724.85
 
 export default function TabTwoScreen() {
-  const [sumBenefits, setSumBenefits] = useState<Benefit[]>([{
-    startDate: '2023-08-01',
-    sum: sumBenefit
-  }])
+  // const [sumBenefits, setSumBenefits] = useState<Benefit[]>()
   const [isShowModalNew, setIsShowModalNew] = useState(false)
+
+  const sumBenefits = useSelector((state: RootState) => state.benefits.sumBenefits)
+  const dispatch = useDispatch();
 
   const colorScheme = useColorScheme();
   const colorBtn = Colors[colorScheme ?? 'light'].button
 
-  const fetchData = async () => {
-    try {
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   console.log('datadatadata', sumBenefits);
-  
 
   return (
     <ParallaxScrollView
@@ -104,12 +96,12 @@ export default function TabTwoScreen() {
       </ThemedView>
 
       <SafeAreaView>
-        {sumBenefits.map((item) => (
-          <ThemedView style={styles.titleContainer} key={item.startDate}>
+        {Object.entries(sumBenefits).map(([startDate, sum]) => (
+          <ThemedView style={styles.titleContainer} key={startDate}>
             <ThemedText>
               Since
-              <ThemedText type="defaultSemiBold"> {format(item.startDate, 'dd.MM.yyyy')} </ThemedText>
-              - {item.sum} BYN
+              <ThemedText type="defaultSemiBold"> {format(startDate, 'dd.MM.yyyy')} </ThemedText>
+              - {sum} BYN
             </ThemedText>
           </ThemedView>
         ))}
@@ -118,13 +110,10 @@ export default function TabTwoScreen() {
       {isShowModalNew
         ? <ModalAddBenefit onClose={(date, number) => {
           setIsShowModalNew(false)
-          setSumBenefits([
-            ...sumBenefits,
-            {
-              startDate: format(date, 'yyyy-MM-dd'),
-              sum: parseFloat(number)
-            }
-          ])
+          dispatch(addBenefit({
+            startDate: format(date, 'yyyy-MM-dd'),
+            sum: parseFloat(number)
+          }))
         }} />
         : (
           <ThemedView style={styles.addButton}>

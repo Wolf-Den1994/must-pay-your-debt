@@ -4,6 +4,5 @@ export type CardData = {
 }
 
 export type Benefit = {
-  startDate: string,
-  sum: number
+  [key: string]: number
 }
