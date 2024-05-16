@@ -1,91 +1,46 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Button, FlatList, TextInput, SafeAreaView, RefreshControl, ScrollView } from 'react-native';
+import { StyleSheet, Button, SafeAreaView } from 'react-native';
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { useDispatch, useSelector } from 'react-redux';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
-import { RootState } from '@/store';
-import { addBenefit } from '@/store/benefitsSlice';
-
-type AndroidMode = 'date' | 'time';
-
-type ModalProps = {
-  onClose: (date: Date, num: string) => void;
-}
-
-const ModalAddBenefit = ({ onClose }: ModalProps) => {
-  const [date, setDate] = useState(new Date())
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [number, onChangeNumber] = useState('');
-
-  const colorScheme = useColorScheme();
-  const colorBtn = Colors[colorScheme ?? 'light'].button
-  const colorText = Colors[colorScheme ?? 'light'].text
-  const colorIcon = Colors[colorScheme ?? 'light'].icon
-
-  return (
-    <SafeAreaView style={styles.addButton}>
-      <Button onPress={() => setShowDatePicker(true)} title="Select start date" />
-      {showDatePicker && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode="date"
-          is24Hour={true}
-          onChange={(event: DateTimePickerEvent, selectedDate: any) => {
-            setShowDatePicker(false);
-            setDate(selectedDate);
-          }}
-        />
-      )}
-
-      <TextInput
-        style={{
-          ...styles.input,
-          borderColor: colorText,
-          color: colorText,
-        }}
-        placeholderTextColor={colorIcon}
-        onChangeText={onChangeNumber}
-        value={number}
-        placeholder="Select sum benefit, BYN"
-        keyboardType="numeric"
-      />
-
-      {number && (
-        <>
-          <ThemedView style={styles.selected}>
-            <ThemedText>Selected date: {format(date, 'dd.MM.yyyy')}</ThemedText>
-            <ThemedText>Selected sum benefit: {number} BYN</ThemedText>
-          </ThemedView>
-
-          <ThemedView style={styles.addButton}>
-            <Button title="Set new benefit" color={colorBtn} onPress={() => onClose(date, number)} />
-          </ThemedView>
-        </>
-      )}
-    </SafeAreaView>
-  )
-}
-
-const startDate = new Date(2024, 0, 1) // 01 Jan 2024
+import ModalAddBenefit from '@/components/ModalAddBenefit';
+import { getData, storeData } from '@/utils/storage';
+import { KEY_BENEFITS } from '@/utils/keys-storage';
+import { Benefit } from '@/types';
 
 export default function TabTwoScreen() {
-  // const [sumBenefits, setSumBenefits] = useState<Benefit[]>()
   const [isShowModalNew, setIsShowModalNew] = useState(false)
-
-  const sumBenefits = useSelector((state: RootState) => state.benefits.sumBenefits)
-  const dispatch = useDispatch();
+  const [sumBenefits, setSumBenefits] = useState<Benefit>({})
 
   const colorScheme = useColorScheme();
   const colorBtn = Colors[colorScheme ?? 'light'].button
 
-  console.log('datadatadata', sumBenefits);
+  const addNewBenefit = (date: Date, number: string) => {
+    const newData = {
+      ...sumBenefits,
+      [format(date, 'yyyy-MM-dd')]: parseFloat(number)
+    }
+    setSumBenefits((v) => ({
+      ...v,
+      ...newData
+    }))
+    storeData(KEY_BENEFITS, newData)
+  }
+
+  const fetchData = async () => {
+    const data = await getData(KEY_BENEFITS)
+    if (data && !Array.isArray(data)) {
+      setSumBenefits(data)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  })
 
   return (
     <ParallaxScrollView
@@ -110,10 +65,7 @@ export default function TabTwoScreen() {
       {isShowModalNew
         ? <ModalAddBenefit onClose={(date, number) => {
           setIsShowModalNew(false)
-          dispatch(addBenefit({
-            startDate: format(date, 'yyyy-MM-dd'),
-            sum: parseFloat(number)
-          }))
+          addNewBenefit(date, number)
         }} />
         : (
           <ThemedView style={styles.addButton}>

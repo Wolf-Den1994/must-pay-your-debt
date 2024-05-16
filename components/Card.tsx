@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-
+import { format } from 'date-fns';
 import { ThemedView } from './ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
@@ -15,7 +15,7 @@ export function Card({ date, pay }: CardData) {
       ...styles.card,
       shadowColor,
     }}>
-      <ThemedText type="subtitle">{date}</ThemedText>
+      <ThemedText type="subtitle">{format(date, 'dd.MM.yyyy')}</ThemedText>
       <ThemedText>{pay} BYN</ThemedText>
     </ThemedView>
   )

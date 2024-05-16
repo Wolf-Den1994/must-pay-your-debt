@@ -17,9 +17,13 @@ const benefitsSlice = createSlice({
   name: 'benefits',
   initialState,
   reducers: {
+    initBenefit(state, action) {
+      console.log('action.payload', action.payload)
+      state.sumBenefits = {
+        ...action.payload
+      }
+    },
     addBenefit(state, action) {
-      console.log('action', action);
-      
       state.sumBenefits = {
         ...state.sumBenefits,
         [action.payload.startDate]: action.payload.sum
@@ -28,5 +32,5 @@ const benefitsSlice = createSlice({
   }
 })
 
-export const { addBenefit } = benefitsSlice.actions
+export const { addBenefit, initBenefit } = benefitsSlice.actions
 export default benefitsSlice.reducer
