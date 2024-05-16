@@ -27,3 +27,11 @@ export const removeItem = async (key: string) => {
     console.error('Error removing item:', error);
   }
 };
+
+export const clear = async () => {
+  try {
+    await AsyncStorage.clear();
+  } catch (error) {
+    console.error('Error clearing AsyncStorage:', error);
+  }
+};

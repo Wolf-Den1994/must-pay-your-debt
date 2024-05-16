@@ -54,7 +54,7 @@ export default function ModalAddPay({ onClose }: ModalProps) {
         <>
           <ThemedView style={styles.selected}>
             <ThemedText>Selected date: {format(date, 'dd.MM.yyyy')}</ThemedText>
-            <ThemedText>Selected sum pay: {number} BYN</ThemedText>
+            <ThemedText>Selected sum pay: {number} BYN (use dot for coins)</ThemedText>
           </ThemedView>
 
           <ThemedView style={styles.addButton}>

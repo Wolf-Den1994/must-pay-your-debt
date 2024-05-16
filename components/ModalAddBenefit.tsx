@@ -20,6 +20,7 @@ export default function ModalAddBenefit({ onClose }: ModalProps) {
   const colorBtn = Colors[colorScheme ?? 'light'].button
   const colorText = Colors[colorScheme ?? 'light'].text
   const colorIcon = Colors[colorScheme ?? 'light'].icon
+console.log('ModalAddBenefit');
 
   return (
     <SafeAreaView style={styles.addButton}>
@@ -54,7 +55,7 @@ export default function ModalAddBenefit({ onClose }: ModalProps) {
         <>
           <ThemedView style={styles.selected}>
             <ThemedText>Selected date: {format(date, 'dd.MM.yyyy')}</ThemedText>
-            <ThemedText>Selected sum benefit: {number} BYN</ThemedText>
+            <ThemedText>Selected sum benefit: {number} BYN (use dot for coins)</ThemedText>
           </ThemedView>
 
           <ThemedView style={styles.addButton}>

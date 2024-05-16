@@ -2,15 +2,18 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, Button, SafeAreaView } from 'react-native';
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import * as Crypto from 'expo-crypto';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import ModalAddBenefit from '@/components/ModalAddBenefit';
-import { getData, storeData } from '@/utils/storage';
+import { clear, getData, storeData } from '@/utils/storage';
 import { KEY_BENEFITS } from '@/utils/keys-storage';
 import { Benefit } from '@/types';
+
+const sumBenefit = 651.35 // 724.85 // '2023-08-01'
 
 export default function TabTwoScreen() {
   const [isShowModalNew, setIsShowModalNew] = useState(false)
@@ -18,6 +21,10 @@ export default function TabTwoScreen() {
 
   const colorScheme = useColorScheme();
   const colorBtn = Colors[colorScheme ?? 'light'].button
+
+  const clearAsyncStorage = async() => {
+    clear();
+  }
 
   const addNewBenefit = (date: Date, number: string) => {
     const newData = {
@@ -40,7 +47,7 @@ export default function TabTwoScreen() {
 
   useEffect(() => {
     fetchData()
-  })
+  }, [])
 
   return (
     <ParallaxScrollView
@@ -51,8 +58,8 @@ export default function TabTwoScreen() {
       </ThemedView>
 
       <SafeAreaView>
-        {Object.entries(sumBenefits).map(([startDate, sum]) => (
-          <ThemedView style={styles.titleContainer} key={startDate}>
+        {Object.entries(sumBenefits).reverse().map(([startDate, sum]) => (
+          <ThemedView style={styles.titleContainer} key={Crypto.randomUUID()}>
             <ThemedText>
               Since
               <ThemedText type="defaultSemiBold"> {format(startDate, 'dd.MM.yyyy')} </ThemedText>
@@ -73,6 +80,8 @@ export default function TabTwoScreen() {
           </ThemedView>
         )
       }
+
+      <Button onPress={clearAsyncStorage} title="Clear all storage" />
     </ParallaxScrollView>
   );
 }

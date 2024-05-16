@@ -1,6 +1,7 @@
 import { Image, StyleSheet, SafeAreaView, Button } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { format, parseISO, isWithinInterval, addMonths, addDays } from 'date-fns';
+import * as Crypto from 'expo-crypto';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -17,8 +18,10 @@ const currentDate = new Date();
 
 export default function HomeScreen() {
   const [items, setItems] = useState<CardData[]>([]);
-  const [allDebt, setAllDebt] = useState<number>(0);
+  const [displedDebt, setDispledDebt] = useState<number>(0);
   const [isShowModalNew, setIsShowModalNew] = useState(false)
+
+  const allDebt = useRef(0);
 
   const colorScheme = useColorScheme();
   const colorBtn = Colors[colorScheme ?? 'light'].button
@@ -63,7 +66,14 @@ export default function HomeScreen() {
 
   const calcAllDebt = (debts: CardData[]) => {
     const sumAllPayments = debts.reduce((acc, item) => acc + item.pay, 0)
-    setAllDebt((v) => v - sumAllPayments)
+    console.log('sumAllPayments', sumAllPayments, 'allDebt.current ', allDebt.current);
+    const newDispledDebt = allDebt.current - sumAllPayments
+    setDispledDebt(newDispledDebt)
+  }
+
+  const sortArrayByDate = (array: CardData[]): CardData[] => {
+    const copy = array.slice()
+    return copy.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   }
 
   const fetchData = async () => {
@@ -73,7 +83,8 @@ export default function HomeScreen() {
         const intervals = getIntervals(sumBenefits)
 
         const totalDebt = calcDebt(sumBenefits, intervals)        
-        setAllDebt(totalDebt);
+        setDispledDebt(totalDebt);
+        allDebt.current = totalDebt;
 
         const debts = await getData(KEY_DEBTS);
         if (debts && Array.isArray(debts)) {
@@ -100,12 +111,11 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">All debt: {allDebt} BYN</ThemedText>
-        <ThemedText type="link">(Start account: {format(startDateProject, 'dd.MM.yyyy')})</ThemedText>
+        <ThemedText type="title">All debt: {displedDebt} BYN</ThemedText>
       </ThemedView>
 
       <SafeAreaView>
-        {items.map((item) => <Card key={item.date + item.pay} date={item.date} pay={item.pay} />)}
+        {sortArrayByDate(items).map((item) => <Card key={Crypto.randomUUID()} date={item.date} pay={item.pay} />)}
       </SafeAreaView>
 
       {isShowModalNew
@@ -119,6 +129,10 @@ export default function HomeScreen() {
           </ThemedView>
         )
       }
+
+      <ThemedView style={styles.startAccout}>
+        <ThemedText type="link">(Start account: {format(startDateProject, 'dd.MM.yyyy')})</ThemedText>
+      </ThemedView>
     </ParallaxScrollView>
   );
 }
@@ -139,5 +153,10 @@ const styles = StyleSheet.create({
   addButton: {
     marginTop: 14,
     cursor: 'pointer',
+  },
+  startAccout: {
+    marginTop: 20,
+    flexDirection: 'column',
+    alignItems: 'flex-end',
   }
 });
