@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Image, StyleSheet, SafeAreaView, Button } from 'react-native';
+import { Image, StyleSheet, SafeAreaView, Button, ActivityIndicator } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
 import { format, parseISO, isWithinInterval, addMonths, addDays } from 'date-fns';
 import * as Crypto from 'expo-crypto';
@@ -31,7 +31,8 @@ export default function HomeScreen() {
   const [displedDebt, setDispledDebt] = useState<number>(0);
   const [isShowModalNew, setIsShowModalNew] = useState(false);
   const [sumBenefits, setSumBenefits] = useState<Benefit>({});
-  const [benifitItems, setBenefitItems] = useState<CardData[]>(startData)
+  const [benifitItems, setBenefitItems] = useState<CardData[]>(startData);
+  const [isLoading, setIsLoading] = useState(true);
 
   const allDebt = useRef(0);
 
@@ -102,6 +103,7 @@ export default function HomeScreen() {
 
   const fetchData = async () => {
     try {
+      setIsLoading(true);
       const benefits = await getData(KEY_BENEFITS)
       if (benefits && !Array.isArray(benefits)) {
         setSumBenefits(benefits)
@@ -119,12 +121,32 @@ export default function HomeScreen() {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   useEffect(() => {
     fetchData();
   }, [])
+
+  if (isLoading) {
+    return (
+      <ParallaxScrollView
+        headerBackgroundColor={{ light: '#d8dca1', dark: '#6e6909' }}
+        headerImage={
+          <Image
+            source={require('@/assets/images/coins.png')}
+            style={styles.coinsLogo}
+          />
+        }>
+        <ThemedView style={styles.titleContainerColumn}>
+          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>Loading...</ThemedText>
+          <ActivityIndicator size="large" color={colorTint} />
+        </ThemedView>
+      </ParallaxScrollView>
+    )
+  }
 
   if (!Object.keys(sumBenefits).length) {
     return (
