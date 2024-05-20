@@ -1,3 +1,4 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet } from 'react-native';
 import { format } from 'date-fns';
 import { ThemedView } from './ThemedView';
@@ -6,19 +7,44 @@ import { Colors } from '@/constants/Colors';
 import { CardData } from '@/types';
 import { ThemedText } from './ThemedText';
 
-export function Card({ date, pay, isBenefit }: CardData) {
+type CardProps = CardData & {
+  onRemoveCard: () => void;
+}
+
+export function Card({ date, pay, isBenefit, onRemoveCard }: CardProps) {
   const colorScheme = useColorScheme();
   const shadowColor = Colors[colorScheme ?? 'light'].icon
   const debtColor = Colors[colorScheme ?? 'light'].debt
   const tintColor = Colors[colorScheme ?? 'light'].tint
+
+  const formatedDate = format(date, 'dd.MM.yyyy')
 
   return (
     <ThemedView style={{
       ...styles.card,
       shadowColor,
     }}>
-      <ThemedText type="subtitle" lightColor={isBenefit ? debtColor : tintColor} darkColor={isBenefit ? debtColor : tintColor}>{format(date, 'dd.MM.yyyy')}</ThemedText>
-      <ThemedText lightColor={isBenefit ? debtColor : tintColor} darkColor={isBenefit ? debtColor : tintColor}>{pay} BYN</ThemedText>
+      <ThemedText
+        type="subtitle"
+        lightColor={isBenefit ? debtColor : tintColor}
+        darkColor={isBenefit ? debtColor : tintColor}
+      >
+        {formatedDate}
+      </ThemedText>
+      {!isBenefit && formatedDate !== '01.08.2023' && (
+        <Ionicons
+          onPress={onRemoveCard}
+          size={310}
+          name="remove-circle-outline"
+          style={styles.deleteIcon}
+        />
+      )}
+      <ThemedText
+        lightColor={isBenefit ? debtColor : tintColor}
+        darkColor={isBenefit ? debtColor : tintColor}
+      >
+        {pay} BYN
+      </ThemedText>
     </ThemedView>
   )
 }
@@ -45,6 +71,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  deleteIcon: {
+    color: '#f0ec0c',
+    fontSize: 22,
   },
 });
 

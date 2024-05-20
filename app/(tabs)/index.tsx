@@ -40,12 +40,16 @@ export default function HomeScreen() {
   const colorBtn = Colors[colorScheme ?? 'light'].button
   const colorTint = Colors[colorScheme ?? 'light'].tint
 
-  const addNewPay = (date: Date, number: string) => {
-    const newData = [...items, { date: format(date, 'yyyy-MM-dd'), pay: parseFloat(number) }]
+  const setNewData = (newData: CardData[]) => {
     setItems(newData);
     storeData(KEY_DEBTS, newData);
 
-    calcAllDebt(newData)
+    calcAllDebt(newData);
+  }
+
+  const addNewPay = (date: Date, number: string) => {
+    const newData = [...items, { date: format(date, 'yyyy-MM-dd'), pay: parseFloat(number) }]
+    setNewData(newData);
   }
 
   const getIntervals = (data: object): Interval[] => {
@@ -92,15 +96,18 @@ export default function HomeScreen() {
     setDispledDebt(newDispledDebt)
   }
 
+  const removePay = (card: CardData) => {
+    const filteredItems = items.filter((item) => JSON.stringify(item) !== JSON.stringify(card));
+    setNewData(filteredItems);
+  }
+
   const sortArrayByDate = (array: CardData[]): CardData[] => {
     const copy = array.slice()
     return copy.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   }
 
   const getItems = (): CardData[] => {
-    const copyItems = items.slice();
-    const copyBenifitItems = benifitItems.slice();
-    return sortArrayByDate([...copyItems, ...copyBenifitItems])
+    return sortArrayByDate([...benifitItems, ...items])
   }
 
   const fetchData = async () => {
@@ -119,7 +126,7 @@ export default function HomeScreen() {
         const debts = await getData(KEY_DEBTS);
         if (debts && Array.isArray(debts)) {
           setItems(debts);
-          calcAllDebt(debts)
+          calcAllDebt(debts);
         }
       }
     } catch (err) {
@@ -204,7 +211,15 @@ export default function HomeScreen() {
       }
 
       <SafeAreaView>
-        {getItems().map((item) => <Card key={Crypto.randomUUID()} date={item.date} pay={item.pay} isBenefit={item.isBenefit} />)}
+        {getItems().map((item) =>
+          <Card
+            key={Crypto.randomUUID()}
+            date={item.date}
+            pay={item.pay}
+            isBenefit={item.isBenefit}
+            onRemoveCard={() => removePay(item)}
+          />
+        )}
       </SafeAreaView>
 
       <ThemedView style={styles.startAccout}>
