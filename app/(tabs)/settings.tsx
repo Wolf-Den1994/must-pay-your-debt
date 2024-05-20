@@ -9,9 +9,10 @@ import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import ModalAddBenefit from '@/components/ModalAddBenefit';
-import { clear, getData, storeData } from '@/utils/storage';
+import { getData, storeData } from '@/utils/storage';
 import { KEY_BENEFITS } from '@/utils/keys-storage';
 import { Benefit } from '@/types';
+import ClearAllStorage from '@/components/ClearAllStorage';
 
 const sumBenefit = 651.35 // 724.85 // '2023-08-01'
 
@@ -21,10 +22,6 @@ export default function TabTwoScreen() {
 
   const colorScheme = useColorScheme();
   const colorBtn = Colors[colorScheme ?? 'light'].button
-
-  const clearAsyncStorage = async() => {
-    clear();
-  }
 
   const addNewBenefit = (date: Date, number: string) => {
     const newData = {
@@ -71,9 +68,11 @@ export default function TabTwoScreen() {
 
       {isShowModalNew
         ? <ModalAddBenefit onClose={(date, number) => {
-          setIsShowModalNew(false)
-          addNewBenefit(date, number)
-        }} />
+              setIsShowModalNew(false)
+              addNewBenefit(date, number)
+            }}
+            onHide={() => setIsShowModalNew(false)}
+          />
         : (
           <ThemedView style={styles.addButton}>
             <Button title="Add new benefit" color={colorBtn} onPress={() => setIsShowModalNew(true)} />
@@ -81,7 +80,7 @@ export default function TabTwoScreen() {
         )
       }
 
-      <Button onPress={clearAsyncStorage} title="Clear all storage" />
+      <ClearAllStorage />
     </ParallaxScrollView>
   );
 }

@@ -9,22 +9,23 @@ import { Colors } from '@/constants/Colors';
 
 type ModalProps = {
   onClose: (date: Date, num: string) => void;
+  onHide: () => void;
 }
 
-export default function ModalAddBenefit({ onClose }: ModalProps) {
+export default function ModalAddBenefit({ onClose, onHide }: ModalProps) {
   const [date, setDate] = useState(new Date())
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [number, onChangeNumber] = useState('');
 
   const colorScheme = useColorScheme();
   const colorBtn = Colors[colorScheme ?? 'light'].button
+  const colorSecBtn = Colors[colorScheme ?? 'light'].secondButton
   const colorText = Colors[colorScheme ?? 'light'].text
   const colorIcon = Colors[colorScheme ?? 'light'].icon
-console.log('ModalAddBenefit');
 
   return (
     <SafeAreaView style={styles.addButton}>
-      <Button onPress={() => setShowDatePicker(true)} title="Select start date" />
+      <Button onPress={() => setShowDatePicker(true)} color={colorBtn} title="Select start date" />
       {showDatePicker && (
         <DateTimePicker
           testID="dateTimePicker"
@@ -63,6 +64,10 @@ console.log('ModalAddBenefit');
           </ThemedView>
         </>
       )}
+
+      <ThemedView style={styles.addButton}>
+        <Button title="Close" color={colorSecBtn} onPress={onHide} />
+      </ThemedView>
     </SafeAreaView>
   )
 }

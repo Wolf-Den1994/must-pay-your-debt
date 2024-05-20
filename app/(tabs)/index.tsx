@@ -1,3 +1,4 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Image, StyleSheet, SafeAreaView, Button } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
 import { format, parseISO, isWithinInterval, addMonths, addDays } from 'date-fns';
@@ -66,7 +67,6 @@ export default function HomeScreen() {
 
   const calcAllDebt = (debts: CardData[]) => {
     const sumAllPayments = debts.reduce((acc, item) => acc + item.pay, 0)
-    console.log('sumAllPayments', sumAllPayments, 'allDebt.current ', allDebt.current);
     const newDispledDebt = allDebt.current - sumAllPayments
     setDispledDebt(newDispledDebt)
   }
@@ -112,6 +112,9 @@ export default function HomeScreen() {
       }>
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">All debt: {displedDebt} BYN</ThemedText>
+        <Ionicons onPress={() => {
+          fetchData();
+        }} size={310} name="reload" style={styles.headerIcon} />
       </ThemedView>
 
       <SafeAreaView>
@@ -120,9 +123,11 @@ export default function HomeScreen() {
 
       {isShowModalNew
         ? <ModalAddPay onClose={(date, number) => {
-          setIsShowModalNew(false)
-          addNewPay(date, number)
-        }} />
+              setIsShowModalNew(false)
+              addNewPay(date, number)
+            }}
+            onHide={() => setIsShowModalNew(false)}
+          />
         : (
           <ThemedView style={styles.addButton}>
             <Button title="Add new benefit" color={colorBtn} onPress={() => setIsShowModalNew(true)} />
@@ -141,6 +146,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 8,
   },
   coinsLogo: {
@@ -158,5 +164,14 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flexDirection: 'column',
     alignItems: 'flex-end',
-  }
+  },
+  headerIcon: {
+    color: '#f0ec0c',
+    bottom: 10,
+    right: 5,
+    position: 'absolute',
+    width: 20,
+    height: 20,
+    fontSize: 22,
+  },
 });

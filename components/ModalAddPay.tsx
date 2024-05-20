@@ -9,21 +9,23 @@ import { Colors } from '@/constants/Colors';
 
 type ModalProps = {
   onClose: (date: Date, num: string) => void;
+  onHide: () => void;
 }
 
-export default function ModalAddPay({ onClose }: ModalProps) {
+export default function ModalAddPay({ onClose, onHide }: ModalProps) {
   const [date, setDate] = useState(new Date())
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [number, onChangeNumber] = useState('');
 
   const colorScheme = useColorScheme();
   const colorBtn = Colors[colorScheme ?? 'light'].button
+  const colorSecBtn = Colors[colorScheme ?? 'light'].secondButton
   const colorText = Colors[colorScheme ?? 'light'].text
   const colorIcon = Colors[colorScheme ?? 'light'].icon
 
   return (
     <SafeAreaView style={styles.addButton}>
-      <Button onPress={() => setShowDatePicker(true)} title="Select date of receipt" />
+      <Button onPress={() => setShowDatePicker(true)} color={colorBtn} title="Select date of receipt" />
       {showDatePicker && (
         <DateTimePicker
           testID="dateTimePicker"
@@ -62,6 +64,10 @@ export default function ModalAddPay({ onClose }: ModalProps) {
           </ThemedView>
         </>
       )}
+
+      <ThemedView style={styles.addButton}>
+        <Button title="Close" color={colorSecBtn} onPress={onHide} />
+      </ThemedView>
     </SafeAreaView>
   )
 }
