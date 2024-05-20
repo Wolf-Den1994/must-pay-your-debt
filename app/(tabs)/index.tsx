@@ -20,7 +20,7 @@ const startData = [{
   pay: 469.15,
   isBenefit: true,
 }, {
-  date: format('2023-07-20', 'yyyy-MM-dd'),
+  date: format('2023-08-01', 'yyyy-MM-dd'),
   pay: 469.15,
 }]
 const startDecree = new Date(2023, 7, 1) // 01 Aug 2023
@@ -98,12 +98,15 @@ export default function HomeScreen() {
   }
 
   const getItems = (): CardData[] => {
-    return sortArrayByDate([...items, ...benifitItems])
+    const copyItems = items.slice();
+    const copyBenifitItems = benifitItems.slice();
+    return sortArrayByDate([...copyItems, ...copyBenifitItems])
   }
 
   const fetchData = async () => {
     try {
       setIsLoading(true);
+      setBenefitItems(startData);
       const benefits = await getData(KEY_BENEFITS)
       if (benefits && !Array.isArray(benefits)) {
         setSumBenefits(benefits)
