@@ -6,17 +6,19 @@ import { Colors } from '@/constants/Colors';
 import { CardData } from '@/types';
 import { ThemedText } from './ThemedText';
 
-export function Card({ date, pay }: CardData) {
+export function Card({ date, pay, isBenefit }: CardData) {
   const colorScheme = useColorScheme();
   const shadowColor = Colors[colorScheme ?? 'light'].icon
+  const debtColor = Colors[colorScheme ?? 'light'].debt
+  const tintColor = Colors[colorScheme ?? 'light'].tint
 
   return (
     <ThemedView style={{
       ...styles.card,
       shadowColor,
     }}>
-      <ThemedText type="subtitle">{format(date, 'dd.MM.yyyy')}</ThemedText>
-      <ThemedText>{pay} BYN</ThemedText>
+      <ThemedText type="subtitle" lightColor={isBenefit ? debtColor : tintColor} darkColor={isBenefit ? debtColor : tintColor}>{format(date, 'dd.MM.yyyy')}</ThemedText>
+      <ThemedText lightColor={isBenefit ? debtColor : tintColor} darkColor={isBenefit ? debtColor : tintColor}>{pay} BYN</ThemedText>
     </ThemedView>
   )
 }

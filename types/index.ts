@@ -1,6 +1,7 @@
 export type CardData = {
   date: string,
-  pay: number
+  pay: number,
+  isBenefit?: boolean,
 }
 
 export type Benefit = {

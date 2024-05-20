@@ -16,6 +16,7 @@ export const Colors = {
     tabIconSelected: tintColorLight,
     button: '#cdb600',
     secondButton: '#a59c54',
+    debt: '#a22',
   },
   dark: {
     text: '#ECEDEE',
@@ -26,5 +27,6 @@ export const Colors = {
     tabIconSelected: tintColorDark,
     button: '#d7c000',
     secondButton: '#afa959',
+    debt: '#c23c3c',
   },
 };

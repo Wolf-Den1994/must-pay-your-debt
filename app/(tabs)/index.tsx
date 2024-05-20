@@ -13,19 +13,31 @@ import ModalAddPay from '@/components/ModalAddPay';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import { KEY_DEBTS, KEY_BENEFITS } from '@/utils/keys-storage';
+import { normalizedInput } from '@/utils/normalized';
 
-const startDateProject = new Date(2024, 0, 1) // 01 Jan 2024
+const startData = [{
+  date: format('2023-07-01', 'yyyy-MM-dd'),
+  pay: 469.15,
+  isBenefit: true,
+}, {
+  date: format('2023-07-20', 'yyyy-MM-dd'),
+  pay: 469.15,
+}]
+const startDecree = new Date(2023, 7, 1) // 01 Aug 2023
 const currentDate = new Date();
 
 export default function HomeScreen() {
   const [items, setItems] = useState<CardData[]>([]);
   const [displedDebt, setDispledDebt] = useState<number>(0);
-  const [isShowModalNew, setIsShowModalNew] = useState(false)
+  const [isShowModalNew, setIsShowModalNew] = useState(false);
+  const [sumBenefits, setSumBenefits] = useState<Benefit>({});
+  const [benifitItems, setBenefitItems] = useState<CardData[]>(startData)
 
   const allDebt = useRef(0);
 
   const colorScheme = useColorScheme();
   const colorBtn = Colors[colorScheme ?? 'light'].button
+  const colorTint = Colors[colorScheme ?? 'light'].tint
 
   const addNewPay = (date: Date, number: string) => {
     const newData = [...items, { date: format(date, 'yyyy-MM-dd'), pay: parseFloat(number) }]
@@ -42,8 +54,8 @@ export default function HomeScreen() {
     }));
   }
 
-  const calcDebt = (sumBenefits: Benefit, intervals: Interval[]) => {
-    let currentDatePointer = startDateProject;
+  const calcDebt = (benefits: Benefit, intervals: Interval[]) => {
+    let currentDatePointer = startDecree;
     let totalDebt = 0;
     const prevMonthDate = addMonths(currentDate, -1)
     while (currentDatePointer < prevMonthDate) {
@@ -51,7 +63,15 @@ export default function HomeScreen() {
         if (isWithinInterval(currentDatePointer, interval)) {
           const startDate = interval.start;
           const formatedStartDate = format(startDate, 'yyyy-MM-dd')
-          const price = sumBenefits[formatedStartDate]
+          const price = benefits[formatedStartDate]
+          setBenefitItems((v) => ([
+            ...v,
+            {
+              date: format(currentDatePointer, 'yyyy-MM-dd'),
+              pay: price,
+              isBenefit: true,
+            }
+          ]))
           totalDebt += price
         }
       }
@@ -76,13 +96,18 @@ export default function HomeScreen() {
     return copy.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   }
 
+  const getItems = (): CardData[] => {
+    return sortArrayByDate([...items, ...benifitItems])
+  }
+
   const fetchData = async () => {
     try {
-      const sumBenefits = await getData(KEY_BENEFITS)
-      if (sumBenefits && !Array.isArray(sumBenefits)) {
-        const intervals = getIntervals(sumBenefits)
+      const benefits = await getData(KEY_BENEFITS)
+      if (benefits && !Array.isArray(benefits)) {
+        setSumBenefits(benefits)
+        const intervals = getIntervals(benefits)
 
-        const totalDebt = calcDebt(sumBenefits, intervals)        
+        const totalDebt = calcDebt(benefits, intervals)
         setDispledDebt(totalDebt);
         allDebt.current = totalDebt;
 
@@ -101,6 +126,27 @@ export default function HomeScreen() {
     fetchData();
   }, [])
 
+  if (!Object.keys(sumBenefits).length) {
+    return (
+      <ParallaxScrollView
+        headerBackgroundColor={{ light: '#d8dca1', dark: '#6e6909' }}
+        headerImage={
+          <Image
+            source={require('@/assets/images/coins.png')}
+            style={styles.coinsLogo}
+          />
+        }>
+        <ThemedView style={styles.titleContainerColumn}>
+          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>Benefits should be added first</ThemedText>
+          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>Please, open settings and add</ThemedText>
+          <Ionicons onPress={() => {
+            fetchData();
+          }} size={310} name="reload" style={styles.startHeaderIcon} />
+        </ThemedView>
+      </ParallaxScrollView>
+    )
+  }
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#d8dca1', dark: '#6e6909' }}
@@ -111,32 +157,33 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">All debt: {displedDebt} BYN</ThemedText>
+        <ThemedText type="title">{displedDebt.toFixed(2)} BYN</ThemedText>
         <Ionicons onPress={() => {
           fetchData();
         }} size={310} name="reload" style={styles.headerIcon} />
       </ThemedView>
 
-      <SafeAreaView>
-        {sortArrayByDate(items).map((item) => <Card key={Crypto.randomUUID()} date={item.date} pay={item.pay} />)}
-      </SafeAreaView>
-
       {isShowModalNew
         ? <ModalAddPay onClose={(date, number) => {
-              setIsShowModalNew(false)
-              addNewPay(date, number)
-            }}
-            onHide={() => setIsShowModalNew(false)}
-          />
+          const normalizedNumber = normalizedInput(number)
+          setIsShowModalNew(false)
+          addNewPay(date, normalizedNumber)
+        }}
+          onHide={() => setIsShowModalNew(false)}
+        />
         : (
           <ThemedView style={styles.addButton}>
-            <Button title="Add new benefit" color={colorBtn} onPress={() => setIsShowModalNew(true)} />
+            <Button title="Add new pay" color={colorBtn} onPress={() => setIsShowModalNew(true)} />
           </ThemedView>
         )
       }
 
+      <SafeAreaView>
+        {getItems().map((item) => <Card key={Crypto.randomUUID()} date={item.date} pay={item.pay} isBenefit={item.isBenefit} />)}
+      </SafeAreaView>
+
       <ThemedView style={styles.startAccout}>
-        <ThemedText type="link">(Start account: {format(startDateProject, 'dd.MM.yyyy')})</ThemedText>
+        <ThemedText type="link">(Beginning of maternity leave: {format(startDecree, 'dd.MM.yyyy')})</ThemedText>
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -145,6 +192,12 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  titleContainerColumn: {
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
@@ -174,4 +227,15 @@ const styles = StyleSheet.create({
     height: 20,
     fontSize: 22,
   },
+  startHeaderIcon: {
+    marginTop: 20,
+    color: '#f0ec0c',
+    bottom: 10,
+    right: 5,
+    fontSize: 36,
+  },
+  startTitle: {
+    marginTop: 25,
+    textAlign: 'center',
+  }
 });

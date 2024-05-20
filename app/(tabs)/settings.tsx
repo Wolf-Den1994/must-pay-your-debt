@@ -13,6 +13,7 @@ import { getData, storeData } from '@/utils/storage';
 import { KEY_BENEFITS } from '@/utils/keys-storage';
 import { Benefit } from '@/types';
 import ClearAllStorage from '@/components/ClearAllStorage';
+import { normalizedInput } from '@/utils/normalized';
 
 const sumBenefit = 651.35 // 724.85 // '2023-08-01'
 
@@ -68,8 +69,9 @@ export default function TabTwoScreen() {
 
       {isShowModalNew
         ? <ModalAddBenefit onClose={(date, number) => {
+              const normalizedNumber = normalizedInput(number)
               setIsShowModalNew(false)
-              addNewBenefit(date, number)
+              addNewBenefit(date, normalizedNumber)
             }}
             onHide={() => setIsShowModalNew(false)}
           />

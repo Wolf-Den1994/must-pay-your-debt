@@ -56,7 +56,7 @@ export default function ModalAddBenefit({ onClose, onHide }: ModalProps) {
         <>
           <ThemedView style={styles.selected}>
             <ThemedText>Selected date: {format(date, 'dd.MM.yyyy')}</ThemedText>
-            <ThemedText>Selected sum benefit: {number} BYN (use dot for coins)</ThemedText>
+            <ThemedText>Selected sum benefit: {number} BYN</ThemedText>
           </ThemedView>
 
           <ThemedView style={styles.addButton}>
