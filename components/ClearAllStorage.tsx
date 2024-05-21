@@ -5,6 +5,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import { clear } from '@/utils/storage';
+import AreYouSure from './AreYouSure';
 
 export default function ClearAllStorage() {
   const [isShowModal, setIsShowModal] = useState(false)
@@ -33,9 +34,17 @@ export default function ClearAllStorage() {
       {isShowModal
        ? (
         <ThemedView style={styles.clear}>
-          <ThemedText type="title" darkColor="#a22" lightColor='#a22'>Are you shure?</ThemedText>
-          <Button onPress={clearAsyncStorage} color="#a22" title="YES" />
-          <Button onPress={() => setIsShowModal(false)} color={colorBtn} title=">NOOO!<" />
+          <AreYouSure
+            darkColorText="#a22"
+            lightColorText="#a22"
+            typeText="title"
+            colorBtnYes="#a22"
+            colorBtnNo={colorBtn}
+            textBtnYes="YES"
+            textBtnNo=">NOOO!<"
+            onClickYes={clearAsyncStorage}
+            onClickNo={async () => setIsShowModal(false)}
+          />
           <ThemedText type="defaultSemiBold">After need reload app!</ThemedText>
         </ThemedView>
        )

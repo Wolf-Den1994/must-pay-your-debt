@@ -1,21 +1,27 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet } from 'react-native';
+import { useState } from 'react';
 import { format } from 'date-fns';
 import { ThemedView } from './ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import { CardData } from '@/types';
 import { ThemedText } from './ThemedText';
+import AreYouSure from './AreYouSure';
 
 type CardProps = CardData & {
   onRemoveCard: () => void;
 }
 
 export function Card({ date, pay, isBenefit, onRemoveCard }: CardProps) {
+  const [isShowModal, setIsShowModal] = useState(false)
+
   const colorScheme = useColorScheme();
   const shadowColor = Colors[colorScheme ?? 'light'].icon
   const debtColor = Colors[colorScheme ?? 'light'].debt
   const tintColor = Colors[colorScheme ?? 'light'].tint
+  const buttonColor = Colors[colorScheme ?? 'light'].button
+  const secondButtonColor = Colors[colorScheme ?? 'light'].secondButton
 
   const formatedDate = format(date, 'dd.MM.yyyy')
 
@@ -24,27 +30,46 @@ export function Card({ date, pay, isBenefit, onRemoveCard }: CardProps) {
       ...styles.card,
       shadowColor,
     }}>
-      <ThemedText
-        type="subtitle"
-        lightColor={isBenefit ? debtColor : tintColor}
-        darkColor={isBenefit ? debtColor : tintColor}
-      >
-        {formatedDate}
-      </ThemedText>
-      {!isBenefit && formatedDate !== '01.08.2023' && (
-        <Ionicons
-          onPress={onRemoveCard}
-          size={310}
-          name="remove-circle-outline"
-          style={styles.deleteIcon}
-        />
-      )}
-      <ThemedText
-        lightColor={isBenefit ? debtColor : tintColor}
-        darkColor={isBenefit ? debtColor : tintColor}
-      >
-        {pay} BYN
-      </ThemedText>
+      {isShowModal
+        ? (
+          <AreYouSure
+            darkColorText={buttonColor}
+            lightColorText={buttonColor}
+            typeText="subtitle"
+            colorBtnYes={buttonColor}
+            colorBtnNo={secondButtonColor}
+            textBtnYes="Yes"
+            textBtnNo="No"
+            onClickYes={async () => onRemoveCard()}
+            onClickNo={async () => setIsShowModal(false)}
+          />
+        )
+        : (
+          <>
+            <ThemedText
+              type="subtitle"
+              lightColor={isBenefit ? debtColor : tintColor}
+              darkColor={isBenefit ? debtColor : tintColor}
+            >
+              {formatedDate}
+            </ThemedText>
+            {!isBenefit && formatedDate !== '01.08.2023' && (
+              <Ionicons
+                onPress={() => setIsShowModal(true)}
+                size={310}
+                name="remove-circle-outline"
+                style={styles.deleteIcon}
+              />
+            )}
+            <ThemedText
+              lightColor={isBenefit ? debtColor : tintColor}
+              darkColor={isBenefit ? debtColor : tintColor}
+            >
+              {pay} BYN
+            </ThemedText>
+          </>
+        )
+      }
     </ThemedView>
   )
 }
@@ -52,7 +77,7 @@ export function Card({ date, pay, isBenefit, onRemoveCard }: CardProps) {
 const styles = StyleSheet.create({
   card: {
     gap: 16,
-    marginBottom: 16,
+    marginBottom: 10,
     borderColor: '#687076',
     borderWidth: 1,
     borderRadius: 12,
@@ -71,6 +96,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    minHeight: 53,
   },
   deleteIcon: {
     color: '#f0ec0c',

@@ -12,3 +12,5 @@ export type Interval = {
   start: Date;
   end: Date;
 }
+
+export type TypeText = 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link'
