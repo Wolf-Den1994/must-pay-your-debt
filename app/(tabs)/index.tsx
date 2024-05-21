@@ -14,6 +14,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import { KEY_DEBTS, KEY_BENEFITS } from '@/utils/keys-storage';
 import { normalizedInput } from '@/utils/normalized';
+import { sortArrayByDate } from '@/utils/common';
 
 const startData = [{
   date: format('2023-07-01', 'yyyy-MM-dd'),
@@ -101,11 +102,6 @@ export default function HomeScreen() {
     setNewData(filteredItems);
   }
 
-  const sortArrayByDate = (array: CardData[]): CardData[] => {
-    const copy = array.slice()
-    return copy.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  }
-
   const getItems = (): CardData[] => {
     return sortArrayByDate([...benifitItems, ...items])
   }
@@ -114,7 +110,7 @@ export default function HomeScreen() {
     try {
       setIsLoading(true);
       setBenefitItems(startData);
-      const benefits = await getData(KEY_BENEFITS)
+      const benefits = await getData(KEY_BENEFITS);
       if (benefits && !Array.isArray(benefits)) {
         setSumBenefits(benefits)
         const intervals = getIntervals(benefits)
@@ -223,7 +219,7 @@ export default function HomeScreen() {
       </SafeAreaView>
 
       <ThemedView style={styles.startAccout}>
-        <ThemedText type="link">(Beginning of maternity leave: {format(startDecree, 'dd.MM.yyyy')})</ThemedText>
+        <ThemedText type="link" numberOfLines={1}>(Beginning maternal: {format(startDecree, 'dd.MM.yyyy')})</ThemedText>
       </ThemedView>
     </ParallaxScrollView>
   );

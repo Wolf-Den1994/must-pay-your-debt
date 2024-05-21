@@ -40,7 +40,7 @@ export function Card({ date, pay, isBenefit, onRemoveCard }: CardProps) {
             colorBtnNo={secondButtonColor}
             textBtnYes="Yes"
             textBtnNo="No"
-            onClickYes={async () => onRemoveCard()}
+            onClickYes={onRemoveCard}
             onClickNo={async () => setIsShowModal(false)}
           />
         )

@@ -14,6 +14,7 @@ import { KEY_BENEFITS } from '@/utils/keys-storage';
 import { Benefit } from '@/types';
 import ClearAllStorage from '@/components/ClearAllStorage';
 import { normalizedInput } from '@/utils/normalized';
+import { BenefitCard } from '@/components/BenefitCard';
 
 const sumBenefit = 651.35 // 724.85 // '2023-08-01'
 
@@ -23,19 +24,28 @@ export default function TabTwoScreen() {
   const [isLoading, setIsLoading] = useState(true);
 
   const colorScheme = useColorScheme();
-  const colorBtn = Colors[colorScheme ?? 'light'].button
+  const buttonColor = Colors[colorScheme ?? 'light'].button
   const colorTint = Colors[colorScheme ?? 'light'].tint
+
+  const setNewData = (newData: { [x: string]: number }) => {
+    setSumBenefits(newData);
+    storeData(KEY_BENEFITS, newData);
+  }
 
   const addNewBenefit = (date: Date, number: string) => {
     const newData = {
       ...sumBenefits,
       [format(date, 'yyyy-MM-dd')]: parseFloat(number)
     }
-    setSumBenefits((v) => ({
-      ...v,
-      ...newData
-    }))
-    storeData(KEY_BENEFITS, newData)
+    setNewData(newData);
+  }
+
+  const removeBenefit = (startDate: string, sum: number) => {
+    const copy = { ...sumBenefits };
+    console.log('copy1', JSON.stringify(copy))
+    delete copy[startDate];
+    console.log('copy2', JSON.stringify(copy))
+    setNewData(copy);
   }
 
   const fetchData = async () => {
@@ -82,13 +92,12 @@ export default function TabTwoScreen() {
       {(Object.keys(sumBenefits).length > 0) && (
         <SafeAreaView style={styles.benefits}>
           {Object.entries(sumBenefits).reverse().map(([startDate, sum]) => (
-            <ThemedView style={styles.titleContainer} key={Crypto.randomUUID()}>
-              <ThemedText>
-                Since
-                <ThemedText type="defaultSemiBold"> {format(startDate, 'dd.MM.yyyy')} </ThemedText>
-                - {sum} BYN
-              </ThemedText>
-            </ThemedView>
+            <BenefitCard
+              key={Crypto.randomUUID()}
+              startDate={startDate}
+              sum={sum}
+              onRemoveBenefit={() => removeBenefit(startDate, sum)}
+            />
           ))}
         </SafeAreaView>
       )}
@@ -103,7 +112,7 @@ export default function TabTwoScreen() {
         />
         : (
           <ThemedView style={styles.addButton}>
-            <Button title="Add new benefit" color={colorBtn} onPress={() => setIsShowModalNew(true)} />
+            <Button title="Add new benefit" color={buttonColor} onPress={() => setIsShowModalNew(true)} />
           </ThemedView>
         )
       }
@@ -126,6 +135,12 @@ const styles = StyleSheet.create({
   },
   titleContainerColumn: {
     flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  titleContainerBenefit: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
@@ -176,5 +191,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-  }
+  },
+  deleteIcon: {
+    color: '#f0ec0c',
+    fontSize: 16,
+  },
 });

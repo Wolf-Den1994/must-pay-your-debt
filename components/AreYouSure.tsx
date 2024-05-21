@@ -10,8 +10,8 @@ type AreYouSureProps = {
   colorBtnNo: string;
   textBtnYes: string;
   textBtnNo: string;
-  onClickYes: () => {};
-  onClickNo: () => {};
+  onClickYes: () => void;
+  onClickNo: () => void;
 }
 
 export default function AreYouSure({
@@ -27,7 +27,7 @@ export default function AreYouSure({
 }: AreYouSureProps) {
   return (
     <>
-      <ThemedText type={typeText} darkColor={darkColorText} lightColor={lightColorText}>Are you shure?</ThemedText>
+      <ThemedText type={typeText} darkColor={darkColorText} lightColor={lightColorText}>Are you sure?</ThemedText>
       <Button onPress={onClickYes} color={colorBtnYes} title={textBtnYes} />
       <Button onPress={onClickNo} color={colorBtnNo} title={textBtnNo} />
     </>
