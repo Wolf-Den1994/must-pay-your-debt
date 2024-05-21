@@ -79,17 +79,19 @@ export default function TabTwoScreen() {
         <ThemedText type="title">Settings</ThemedText>
       </ThemedView>
 
-      <SafeAreaView style={styles.benefits}>
-        {Object.entries(sumBenefits).reverse().map(([startDate, sum]) => (
-          <ThemedView style={styles.titleContainer} key={Crypto.randomUUID()}>
-            <ThemedText>
-              Since
-              <ThemedText type="defaultSemiBold"> {format(startDate, 'dd.MM.yyyy')} </ThemedText>
-              - {sum} BYN
-            </ThemedText>
-          </ThemedView>
-        ))}
-      </SafeAreaView>
+      {(Object.keys(sumBenefits).length > 0) && (
+        <SafeAreaView style={styles.benefits}>
+          {Object.entries(sumBenefits).reverse().map(([startDate, sum]) => (
+            <ThemedView style={styles.titleContainer} key={Crypto.randomUUID()}>
+              <ThemedText>
+                Since
+                <ThemedText type="defaultSemiBold"> {format(startDate, 'dd.MM.yyyy')} </ThemedText>
+                - {sum} BYN
+              </ThemedText>
+            </ThemedView>
+          ))}
+        </SafeAreaView>
+      )}
 
       {isShowModalNew
         ? <ModalAddBenefit onClose={(date, number) => {
@@ -165,9 +167,14 @@ const styles = StyleSheet.create({
     borderColor: '#687076',
     borderWidth: 1,
     borderRadius: 12,
-    paddingBottom: 8,
+    paddingBottom: 10,
     paddingTop: 8,
     paddingLeft: 8,
     paddingRight: 8,
+
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
   }
 });
