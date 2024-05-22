@@ -4,7 +4,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
-import { clear } from '@/utils/storage';
+import { clearAllStorage } from '@/utils/storage';
 import AreYouSure from './AreYouSure';
 
 export default function ClearAllStorage() {
@@ -16,7 +16,7 @@ export default function ClearAllStorage() {
   const colorSecBtn = Colors[colorScheme ?? 'light'].secondButton
 
   const clearAsyncStorage = async () => {
-    clear();
+    clearAllStorage();
     setIsShowModal(false);
     setShouldReload(true);
   }

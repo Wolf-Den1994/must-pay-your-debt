@@ -1,4 +1,4 @@
-export const normalizedInput = (input: string) => {
+export const normalizeMoney = (input: string) => {
   let output = input.trim();
   output = output.replace(/^d[^\d]+/, '');
   output = output.replace(/\s/g, '');

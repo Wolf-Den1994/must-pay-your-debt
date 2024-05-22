@@ -9,11 +9,11 @@ import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import ModalAddNew from '@/components/ModalAddNew';
-import { getData, storeData } from '@/utils/storage';
+import { getDataStorage, saveDataStorage } from '@/utils/storage';
 import { KEY_BENEFITS } from '@/utils/keys-storage';
 import { Benefit } from '@/types';
 import ClearAllStorage from '@/components/ClearAllStorage';
-import { normalizedInput } from '@/utils/normalized';
+import { normalizeMoney } from '@/utils/normalize';
 import { BenefitCard } from '@/components/BenefitCard';
 
 const sumBenefit = 651.35 // 724.85 // '2023-08-01'
@@ -29,7 +29,7 @@ export default function TabTwoScreen() {
 
   const setNewData = (newData: { [x: string]: number }) => {
     setSumBenefits(newData);
-    storeData(KEY_BENEFITS, newData);
+    saveDataStorage(KEY_BENEFITS, newData);
   }
 
   const addNewBenefit = (date: Date, number: string) => {
@@ -51,7 +51,7 @@ export default function TabTwoScreen() {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const data = await getData(KEY_BENEFITS)
+      const data = await getDataStorage(KEY_BENEFITS)
       if (data && !Array.isArray(data)) {
         setSumBenefits(data)
       }
@@ -110,9 +110,9 @@ export default function TabTwoScreen() {
             textSum="Selected sum benefit:"
             textBtnClose="Set new benefit"
             onClose={(date, number) => {
-              const normalizedNumber = normalizedInput(number)
-              setIsShowModalNew(false)
-              addNewBenefit(date, normalizedNumber)
+              const normalizedNumber = normalizeMoney(number);
+              setIsShowModalNew(false);
+              addNewBenefit(date, normalizedNumber);
             }}
             onHide={() => setIsShowModalNew(false)}
           />

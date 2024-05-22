@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CardData, Benefit } from '@/types';
 
-export const storeData = async (key: string, value: CardData[]|Benefit): Promise<void> => {
+export const saveDataStorage = async (key: string, value: CardData[]|Benefit): Promise<void> => {
   try {
     const jsonValue = JSON.stringify(value);
     await AsyncStorage.setItem(key, jsonValue);
@@ -10,7 +10,7 @@ export const storeData = async (key: string, value: CardData[]|Benefit): Promise
   }
 };
 
-export const getData = async (key: string): Promise<null|CardData[]|Benefit> => {
+export const getDataStorage = async (key: string): Promise<null|CardData[]|Benefit> => {
   try {
     const jsonValue = await AsyncStorage.getItem(key);
     return jsonValue != null ? JSON.parse(jsonValue) : null;
@@ -20,15 +20,7 @@ export const getData = async (key: string): Promise<null|CardData[]|Benefit> => 
   }
 };
 
-export const removeItem = async (key: string) => {
-  try {
-    await AsyncStorage.removeItem(key);
-  } catch (error) {
-    console.error('Error removing item:', error);
-  }
-};
-
-export const clear = async () => {
+export const clearAllStorage = async () => {
   try {
     await AsyncStorage.clear();
   } catch (error) {

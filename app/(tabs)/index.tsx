@@ -6,14 +6,14 @@ import * as Crypto from 'expo-crypto';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { getData, storeData } from '@/utils/storage';
+import { getDataStorage, saveDataStorage } from '@/utils/storage';
 import { Benefit, CardData, Interval } from '@/types';
 import { Card } from '@/components/Card';
 import ModalAddNew from '@/components/ModalAddNew';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import { KEY_DEBTS, KEY_BENEFITS } from '@/utils/keys-storage';
-import { normalizedInput } from '@/utils/normalized';
+import { normalizeMoney } from '@/utils/normalize';
 import { sortArrayByDate } from '@/utils/common';
 
 const startData = [{
@@ -43,7 +43,7 @@ export default function HomeScreen() {
 
   const setNewData = (newData: CardData[]) => {
     setItems(newData);
-    storeData(KEY_DEBTS, newData);
+    saveDataStorage(KEY_DEBTS, newData);
 
     calcAllDebt(newData);
   }
@@ -110,7 +110,7 @@ export default function HomeScreen() {
     try {
       setIsLoading(true);
       setBenefitItems(startData);
-      const benefits = await getData(KEY_BENEFITS);
+      const benefits = await getDataStorage(KEY_BENEFITS);
       if (benefits && !Array.isArray(benefits)) {
         setSumBenefits(benefits)
         const intervals = getIntervals(benefits)
@@ -119,7 +119,7 @@ export default function HomeScreen() {
         setDispledDebt(totalDebt);
         allDebt.current = totalDebt;
 
-        const debts = await getData(KEY_DEBTS);
+        const debts = await getDataStorage(KEY_DEBTS);
         if (debts && Array.isArray(debts)) {
           setItems(debts);
           calcAllDebt(debts);
@@ -199,9 +199,9 @@ export default function HomeScreen() {
             textSum="Selected sum pay:"
             textBtnClose="Set new pay"
             onClose={(date, number) => {
-              const normalizedNumber = normalizedInput(number)
-              setIsShowModalNew(false)
-              addNewPay(date, normalizedNumber)
+              const normalizedNumber = normalizeMoney(number);
+              setIsShowModalNew(false);
+              addNewPay(date, normalizedNumber);
             }}
             onHide={() => setIsShowModalNew(false)}
           />
