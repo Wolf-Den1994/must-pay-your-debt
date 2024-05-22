@@ -8,7 +8,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
-import ModalAddBenefit from '@/components/ModalAddBenefit';
+import ModalAddNew from '@/components/ModalAddNew';
 import { getData, storeData } from '@/utils/storage';
 import { KEY_BENEFITS } from '@/utils/keys-storage';
 import { Benefit } from '@/types';
@@ -103,13 +103,20 @@ export default function TabTwoScreen() {
       )}
 
       {isShowModalNew
-        ? <ModalAddBenefit onClose={(date, number) => {
-          const normalizedNumber = normalizedInput(number)
-          setIsShowModalNew(false)
-          addNewBenefit(date, normalizedNumber)
-        }}
-          onHide={() => setIsShowModalNew(false)}
-        />
+        ? (
+          <ModalAddNew
+            textBtnDataPicker="Select start date"
+            placeholderInput="Select sum benefit, BYN"
+            textSum="Selected sum benefit:"
+            textBtnClose="Set new benefit"
+            onClose={(date, number) => {
+              const normalizedNumber = normalizedInput(number)
+              setIsShowModalNew(false)
+              addNewBenefit(date, normalizedNumber)
+            }}
+            onHide={() => setIsShowModalNew(false)}
+          />
+        )
         : (
           <ThemedView style={styles.addButton}>
             <Button title="Add new benefit" color={buttonColor} onPress={() => setIsShowModalNew(true)} />

@@ -9,7 +9,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { getData, storeData } from '@/utils/storage';
 import { Benefit, CardData, Interval } from '@/types';
 import { Card } from '@/components/Card';
-import ModalAddPay from '@/components/ModalAddPay';
+import ModalAddNew from '@/components/ModalAddNew';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 import { KEY_DEBTS, KEY_BENEFITS } from '@/utils/keys-storage';
@@ -192,13 +192,20 @@ export default function HomeScreen() {
       </ThemedView>
 
       {isShowModalNew
-        ? <ModalAddPay onClose={(date, number) => {
-          const normalizedNumber = normalizedInput(number)
-          setIsShowModalNew(false)
-          addNewPay(date, normalizedNumber)
-        }}
-          onHide={() => setIsShowModalNew(false)}
-        />
+        ? (
+          <ModalAddNew
+            textBtnDataPicker="Select date of receipt"
+            placeholderInput="Select sum pay, BYN"
+            textSum="Selected sum pay:"
+            textBtnClose="Set new pay"
+            onClose={(date, number) => {
+              const normalizedNumber = normalizedInput(number)
+              setIsShowModalNew(false)
+              addNewPay(date, normalizedNumber)
+            }}
+            onHide={() => setIsShowModalNew(false)}
+          />
+        )
         : (
           <ThemedView style={styles.addButton}>
             <Button title="Add new pay" color={colorBtn} onPress={() => setIsShowModalNew(true)} />

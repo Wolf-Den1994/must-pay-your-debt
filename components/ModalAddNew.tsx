@@ -8,11 +8,22 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colors } from '@/constants/Colors';
 
 type ModalProps = {
+  textBtnDataPicker: string;
+  placeholderInput: string;
+  textSum: string;
+  textBtnClose: string;
   onClose: (date: Date, num: string) => void;
   onHide: () => void;
 }
 
-export default function ModalAddBenefit({ onClose, onHide }: ModalProps) {
+export default function ModalAddNew({
+  textBtnDataPicker,
+  placeholderInput,
+  textSum,
+  textBtnClose,
+  onClose,
+  onHide,
+}: ModalProps) {
   const [date, setDate] = useState(new Date())
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [number, onChangeNumber] = useState('');
@@ -25,7 +36,7 @@ export default function ModalAddBenefit({ onClose, onHide }: ModalProps) {
 
   return (
     <SafeAreaView style={styles.addButton}>
-      <Button onPress={() => setShowDatePicker(true)} color={colorBtn} title="Select start date" />
+      <Button onPress={() => setShowDatePicker(true)} color={colorBtn} title={textBtnDataPicker} />
       {showDatePicker && (
         <DateTimePicker
           testID="dateTimePicker"
@@ -48,7 +59,7 @@ export default function ModalAddBenefit({ onClose, onHide }: ModalProps) {
         placeholderTextColor={colorIcon}
         onChangeText={onChangeNumber}
         value={number}
-        placeholder="Select sum benefit, BYN"
+        placeholder={placeholderInput}
         keyboardType="numeric"
       />
 
@@ -56,11 +67,11 @@ export default function ModalAddBenefit({ onClose, onHide }: ModalProps) {
         <>
           <ThemedView style={styles.selected}>
             <ThemedText>Selected date: {format(date, 'dd.MM.yyyy')}</ThemedText>
-            <ThemedText>Selected sum benefit: {number} BYN</ThemedText>
+            <ThemedText>{textSum} {number} BYN</ThemedText>
           </ThemedView>
 
           <ThemedView style={styles.addButton}>
-            <Button title="Set new benefit" color={colorBtn} onPress={() => onClose(date, number)} />
+            <Button title={textBtnClose} color={colorBtn} onPress={() => onClose(date, number)} />
           </ThemedView>
         </>
       )}
