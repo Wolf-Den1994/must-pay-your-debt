@@ -34,6 +34,15 @@
     "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f56945a5-0afc-4abe-ae5f-ba6a7f6d2551"
+      }
+    },
+    "owner": "wolf-den"
   }
 }
