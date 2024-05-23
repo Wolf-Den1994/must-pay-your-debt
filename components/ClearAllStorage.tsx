@@ -1,32 +1,32 @@
-import { StyleSheet, Button } from 'react-native';
 import { useState } from 'react';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { StyleSheet, Button } from 'react-native';
+import ThemedText from '@/components/ThemedText';
+import ThemedView from '@/components/ThemedView';
 import { Colors } from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
 import { clearAllStorage } from '@/utils/storage';
 import AreYouSure from './AreYouSure';
 
-export default function ClearAllStorage() {
-  const [isShowModal, setIsShowModal] = useState(false)
-  const [shouldReload, setShouldReload] = useState(false)
+const ClearAllStorage = () => {
+  const [isShowModal, setIsShowModal] = useState(false);
+  const [shouldReload, setShouldReload] = useState(false);
 
   const colorScheme = useColorScheme();
-  const colorBtn = Colors[colorScheme ?? 'light'].button
-  const colorSecBtn = Colors[colorScheme ?? 'light'].secondButton
+  const colorBtn = Colors[colorScheme ?? 'light'].button;
+  const colorSecBtn = Colors[colorScheme ?? 'light'].secondButton;
 
   const clearAsyncStorage = async () => {
     clearAllStorage();
     setIsShowModal(false);
     setShouldReload(true);
-  }
+  };
 
   if (shouldReload) {
     return (
       <ThemedView style={styles.addButton}>
         <ThemedText type="title" darkColor="#a22" lightColor='#a22'>NEED RELOAD!</ThemedText>
       </ThemedView>
-    )
+    );
   }
 
   return (
@@ -52,7 +52,7 @@ export default function ClearAllStorage() {
       }
     </ThemedView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   addButton: {
@@ -70,3 +70,5 @@ const styles = StyleSheet.create({
     borderRadius: 10
   }
 });
+
+export default ClearAllStorage;

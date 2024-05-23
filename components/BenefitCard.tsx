@@ -1,12 +1,12 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet } from 'react-native';
-import { useState } from 'react';
 import { format } from 'date-fns';
-import { ThemedView } from './ThemedView';
-import { ThemedText } from './ThemedText';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colors } from '@/constants/Colors';
+import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import AreYouSure from '@/components/AreYouSure';
+import { Colors } from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import ThemedText from './ThemedText';
+import ThemedView from './ThemedView';
 
 type BenefitProps = {
   startDate: string;
@@ -14,12 +14,12 @@ type BenefitProps = {
   onRemoveBenefit: () => void;
 }
 
-export function BenefitCard({ startDate, sum, onRemoveBenefit }: BenefitProps) {
+const BenefitCard = ({ startDate, sum, onRemoveBenefit }: BenefitProps) => {
   const [isShowModalDelete, setIsShowModalNewDelete] = useState(false);
 
   const colorScheme = useColorScheme();
-  const buttonColor = Colors[colorScheme ?? 'light'].button
-  const secondButtonColor = Colors[colorScheme ?? 'light'].secondButton
+  const buttonColor = Colors[colorScheme ?? 'light'].button;
+  const secondButtonColor = Colors[colorScheme ?? 'light'].secondButton;
 
   return (
     isShowModalDelete
@@ -53,8 +53,8 @@ export function BenefitCard({ startDate, sum, onRemoveBenefit }: BenefitProps) {
           />
         </ThemedView>
       )
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   titleContainerBenefit: {
@@ -72,3 +72,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
   }
 });
+
+export default BenefitCard;

@@ -1,89 +1,100 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Button, SafeAreaView, ActivityIndicator } from 'react-native';
-import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import * as Crypto from 'expo-crypto';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colors } from '@/constants/Colors';
-import ModalAddNew from '@/components/ModalAddNew';
-import { getDataStorage, saveDataStorage } from '@/utils/storage';
-import { KEY_BENEFITS } from '@/utils/keys-storage';
-import { Benefit } from '@/types';
+import { useState, useEffect } from 'react';
+import { StyleSheet, Button, SafeAreaView, ActivityIndicator } from 'react-native';
+import BenefitCard from '@/components/BenefitCard';
 import ClearAllStorage from '@/components/ClearAllStorage';
+import ModalAddNew from '@/components/ModalAddNew';
+import ParallaxScrollView from '@/components/ParallaxScrollView';
+import ThemedText from '@/components/ThemedText';
+import ThemedView from '@/components/ThemedView';
+import { Colors } from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Benefit } from '@/types';
+import { KEY_BENEFITS } from '@/utils/keys-storage';
 import { normalizeMoney } from '@/utils/normalize';
-import { BenefitCard } from '@/components/BenefitCard';
+import { getDataStorage, saveDataStorage } from '@/utils/storage';
 
-const sumBenefit = 651.35 // 724.85 // '2023-08-01'
-
-export default function TabTwoScreen() {
+const TabTwoScreen = () => {
   const [isShowModalNew, setIsShowModalNew] = useState(false);
   const [sumBenefits, setSumBenefits] = useState<Benefit>({});
   const [isLoading, setIsLoading] = useState(true);
 
   const colorScheme = useColorScheme();
-  const buttonColor = Colors[colorScheme ?? 'light'].button
-  const colorTint = Colors[colorScheme ?? 'light'].tint
+  const buttonColor = Colors[colorScheme ?? 'light'].button;
+  const colorTint = Colors[colorScheme ?? 'light'].tint;
 
   const setNewData = (newData: { [x: string]: number }) => {
     setSumBenefits(newData);
     saveDataStorage(KEY_BENEFITS, newData);
-  }
+  };
 
   const addNewBenefit = (date: Date, number: string) => {
     const newData = {
       ...sumBenefits,
       [format(date, 'yyyy-MM-dd')]: parseFloat(number)
-    }
+    };
     setNewData(newData);
-  }
+  };
 
-  const removeBenefit = (startDate: string, sum: number) => {
+  const removeBenefit = (startDate: string) => {
     const copy = { ...sumBenefits };
-    console.log('copy1', JSON.stringify(copy))
     delete copy[startDate];
-    console.log('copy2', JSON.stringify(copy))
     setNewData(copy);
-  }
+  };
 
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const data = await getDataStorage(KEY_BENEFITS)
+      const data = await getDataStorage(KEY_BENEFITS);
       if (data && !Array.isArray(data)) {
-        setSumBenefits(data)
+        setSumBenefits(data);
       }
     } catch (err) {
       console.error(err);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   if (isLoading) {
     return (
       <ParallaxScrollView
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-        headerImage={<Ionicons size={310} name="settings-outline" style={styles.headerImage} />}
+        headerImage={<Ionicons
+          size={310}
+          name="settings-outline"
+          style={styles.headerImage} />
+        }
       >
         <ThemedView style={styles.titleContainerColumn}>
-          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>Loading...</ThemedText>
+          <ThemedText
+            type="title"
+            style={styles.startTitle}
+            darkColor={colorTint}
+            lightColor={colorTint}
+          >
+            Loading...
+          </ThemedText>
           <ActivityIndicator size="large" color={colorTint} />
         </ThemedView>
       </ParallaxScrollView>
-    )
+    );
   }
 
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={<Ionicons size={310} name="settings-outline" style={styles.headerImage} />}
+      headerImage={<Ionicons
+        size={310}
+        name="settings-outline"
+        style={styles.headerImage}
+      />}
     >
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Settings</ThemedText>
@@ -96,7 +107,7 @@ export default function TabTwoScreen() {
               key={Crypto.randomUUID()}
               startDate={startDate}
               sum={sum}
-              onRemoveBenefit={() => removeBenefit(startDate, sum)}
+              onRemoveBenefit={() => removeBenefit(startDate)}
             />
           ))}
         </SafeAreaView>
@@ -119,7 +130,11 @@ export default function TabTwoScreen() {
         )
         : (
           <ThemedView style={styles.addButton}>
-            <Button title="Add new benefit" color={buttonColor} onPress={() => setIsShowModalNew(true)} />
+            <Button
+              title="Add new benefit"
+              color={buttonColor}
+              onPress={() => setIsShowModalNew(true)}
+            />
           </ThemedView>
         )
       }
@@ -127,7 +142,7 @@ export default function TabTwoScreen() {
       <ClearAllStorage />
     </ParallaxScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   headerImage: {
@@ -204,3 +219,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+export default TabTwoScreen;

@@ -1,6 +1,6 @@
-import { Button } from "react-native"
-import { ThemedText } from "./ThemedText"
-import { TypeText } from "@/types";
+import { Button } from 'react-native';
+import { TypeText } from '@/types';
+import ThemedText from './ThemedText';
 
 type AreYouSureProps = {
   darkColorText: string;
@@ -14,7 +14,7 @@ type AreYouSureProps = {
   onClickNo: () => void;
 }
 
-export default function AreYouSure({
+const AreYouSure = ({
   darkColorText,
   lightColorText,
   typeText,
@@ -24,12 +24,12 @@ export default function AreYouSure({
   textBtnNo,
   onClickYes,
   onClickNo
-}: AreYouSureProps) {
-  return (
+}: AreYouSureProps) => (
     <>
       <ThemedText type={typeText} darkColor={darkColorText} lightColor={lightColorText}>Are you sure?</ThemedText>
       <Button onPress={onClickYes} color={colorBtnYes} title={textBtnYes} />
       <Button onPress={onClickNo} color={colorBtnNo} title={textBtnNo} />
     </>
-  )
-}
+  );
+
+export default AreYouSure;

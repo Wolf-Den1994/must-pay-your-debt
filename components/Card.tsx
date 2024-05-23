@@ -1,29 +1,29 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet } from 'react-native';
-import { useState } from 'react';
 import { format } from 'date-fns';
-import { ThemedView } from './ThemedView';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
 import { CardData } from '@/types';
-import { ThemedText } from './ThemedText';
 import AreYouSure from './AreYouSure';
+import ThemedText from './ThemedText';
+import ThemedView from './ThemedView';
 
 type CardProps = CardData & {
   onRemoveCard: () => void;
 }
 
-export function Card({ date, pay, isBenefit, onRemoveCard }: CardProps) {
-  const [isShowModal, setIsShowModal] = useState(false)
+const Card = ({ date, pay, isBenefit, onRemoveCard }: CardProps) => {
+  const [isShowModal, setIsShowModal] = useState(false);
 
   const colorScheme = useColorScheme();
-  const shadowColor = Colors[colorScheme ?? 'light'].icon
-  const debtColor = Colors[colorScheme ?? 'light'].debt
-  const tintColor = Colors[colorScheme ?? 'light'].tint
-  const buttonColor = Colors[colorScheme ?? 'light'].button
-  const secondButtonColor = Colors[colorScheme ?? 'light'].secondButton
+  const shadowColor = Colors[colorScheme ?? 'light'].icon;
+  const debtColor = Colors[colorScheme ?? 'light'].debt;
+  const tintColor = Colors[colorScheme ?? 'light'].tint;
+  const buttonColor = Colors[colorScheme ?? 'light'].button;
+  const secondButtonColor = Colors[colorScheme ?? 'light'].secondButton;
 
-  const formatedDate = format(date, 'dd.MM.yyyy')
+  const formatedDate = format(date, 'dd.MM.yyyy');
 
   return (
     <ThemedView style={{
@@ -71,8 +71,8 @@ export function Card({ date, pay, isBenefit, onRemoveCard }: CardProps) {
         )
       }
     </ThemedView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   card: {
@@ -104,3 +104,4 @@ const styles = StyleSheet.create({
   },
 });
 
+export default Card;

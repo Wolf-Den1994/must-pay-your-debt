@@ -1,11 +1,23 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import TabBarIcon from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
-export default function TabLayout() {
+type TabIconProps = {
+  color: string;
+  focused: boolean;
+}
+
+const HomeTabIcon = ({ color, focused }: TabIconProps) => (
+  <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+)
+
+const SettingsTabIcon = ({ color, focused }: TabIconProps) => (
+  <TabBarIcon name={focused ? 'settings-sharp' : 'settings-outline'} color={color} />
+)
+
+const TabLayout = () => {
   const colorScheme = useColorScheme();
 
   return (
@@ -18,20 +30,18 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Debts',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
+          tabBarIcon: HomeTabIcon,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'settings-sharp' : 'settings-outline'} color={color} />
-          ),
+          tabBarIcon: SettingsTabIcon,
         }}
       />
     </Tabs>
   );
-}
+};
+
+export default TabLayout;

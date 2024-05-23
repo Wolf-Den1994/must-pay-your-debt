@@ -1,11 +1,11 @@
-import { StyleSheet, Button, TextInput, SafeAreaView } from 'react-native';
-import { useState } from 'react';
-import { format } from 'date-fns';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { format } from 'date-fns';
+import { useState } from 'react';
+import { StyleSheet, Button, TextInput, SafeAreaView } from 'react-native';
+import ThemedText from '@/components/ThemedText';
+import ThemedView from '@/components/ThemedView';
 import { Colors } from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 type ModalProps = {
   textBtnDataPicker: string;
@@ -16,23 +16,23 @@ type ModalProps = {
   onHide: () => void;
 }
 
-export default function ModalAddNew({
+const ModalAddNew = ({
   textBtnDataPicker,
   placeholderInput,
   textSum,
   textBtnClose,
   onClose,
   onHide,
-}: ModalProps) {
-  const [date, setDate] = useState(new Date())
+}: ModalProps) => {
+  const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [number, onChangeNumber] = useState('');
 
   const colorScheme = useColorScheme();
-  const colorBtn = Colors[colorScheme ?? 'light'].button
-  const colorSecBtn = Colors[colorScheme ?? 'light'].secondButton
-  const colorText = Colors[colorScheme ?? 'light'].text
-  const colorIcon = Colors[colorScheme ?? 'light'].icon
+  const colorBtn = Colors[colorScheme ?? 'light'].button;
+  const colorSecBtn = Colors[colorScheme ?? 'light'].secondButton;
+  const colorText = Colors[colorScheme ?? 'light'].text;
+  const colorIcon = Colors[colorScheme ?? 'light'].icon;
 
   return (
     <SafeAreaView style={styles.addButton}>
@@ -42,10 +42,12 @@ export default function ModalAddNew({
           testID="dateTimePicker"
           value={date}
           mode="date"
-          is24Hour={true}
-          onChange={(event: DateTimePickerEvent, selectedDate: any) => {
+          is24Hour
+          onChange={(event: DateTimePickerEvent, selectedDate: Date | undefined) => {
             setShowDatePicker(false);
-            setDate(selectedDate);
+            if (selectedDate) {
+              setDate(selectedDate);
+            }
           }}
         />
       )}
@@ -80,8 +82,8 @@ export default function ModalAddNew({
         <Button title="Close" color={colorSecBtn} onPress={onHide} />
       </ThemedView>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   addButton: {
@@ -114,3 +116,5 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   }
 });
+
+export default ModalAddNew;

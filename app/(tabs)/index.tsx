@@ -1,20 +1,20 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Image, StyleSheet, SafeAreaView, Button, ActivityIndicator } from 'react-native';
-import { useState, useEffect, useRef } from 'react';
 import { format, parseISO, isWithinInterval, addMonths, addDays } from 'date-fns';
 import * as Crypto from 'expo-crypto';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { getDataStorage, saveDataStorage } from '@/utils/storage';
-import { Benefit, CardData, Interval } from '@/types';
-import { Card } from '@/components/Card';
+import { useState, useEffect, useRef } from 'react';
+import { Image, StyleSheet, SafeAreaView, Button, ActivityIndicator } from 'react-native';
+import Card from '@/components/Card';
 import ModalAddNew from '@/components/ModalAddNew';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import ParallaxScrollView from '@/components/ParallaxScrollView';
+import ThemedText from '@/components/ThemedText';
+import ThemedView from '@/components/ThemedView';
 import { Colors } from '@/constants/Colors';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Benefit, CardData, Interval } from '@/types';
+import { sortArrayByDate } from '@/utils/common';
 import { KEY_DEBTS, KEY_BENEFITS } from '@/utils/keys-storage';
 import { normalizeMoney } from '@/utils/normalize';
-import { sortArrayByDate } from '@/utils/common';
+import { getDataStorage, saveDataStorage } from '@/utils/storage';
 
 const startData = [{
   date: format('2023-07-01', 'yyyy-MM-dd'),
@@ -23,11 +23,11 @@ const startData = [{
 }, {
   date: format('2023-08-01', 'yyyy-MM-dd'),
   pay: 469.15,
-}]
-const startDecree = new Date(2023, 7, 1) // 01 Aug 2023
+}];
+const startDecree = new Date(2023, 7, 1); // 01 Aug 2023
 const currentDate = new Date();
 
-export default function HomeScreen() {
+const HomeScreen = () => {
   const [items, setItems] = useState<CardData[]>([]);
   const [displedDebt, setDispledDebt] = useState<number>(0);
   const [isShowModalNew, setIsShowModalNew] = useState(false);
@@ -38,49 +38,34 @@ export default function HomeScreen() {
   const allDebt = useRef(0);
 
   const colorScheme = useColorScheme();
-  const colorBtn = Colors[colorScheme ?? 'light'].button
-  const colorTint = Colors[colorScheme ?? 'light'].tint
-
-  const setNewData = (newData: CardData[]) => {
-    setItems(newData);
-    saveDataStorage(KEY_DEBTS, newData);
-
-    calcAllDebt(newData);
-  }
-
-  const addNewPay = (date: Date, number: string) => {
-    const newData = [...items, { date: format(date, 'yyyy-MM-dd'), pay: parseFloat(number) }]
-    setNewData(newData);
-  }
-
-  const getIntervals = (data: object): Interval[] => {
-    return Object.keys(data).map((startDate, index, array) => ({
-      start: parseISO(startDate),
-      end: array[index + 1] ? addDays(parseISO(array[index + 1]), -1) : new Date()
-    }));
-  }
+  const colorBtn = Colors[colorScheme ?? 'light'].button;
+  const colorTint = Colors[colorScheme ?? 'light'].tint;
 
   const calcDebt = (benefits: Benefit, intervals: Interval[]) => {
     let currentDatePointer = startDecree;
     let totalDebt = 0;
-    const prevMonthDate = addMonths(currentDate, -1)
-    while (currentDatePointer < prevMonthDate) {
-      for (const interval of intervals) {
-        if (isWithinInterval(currentDatePointer, interval)) {
-          const startDate = interval.start;
-          const formatedStartDate = format(startDate, 'yyyy-MM-dd')
-          const price = benefits[formatedStartDate]
-          setBenefitItems((v) => ([
-            ...v,
-            {
-              date: format(currentDatePointer, 'yyyy-MM-dd'),
-              pay: price,
-              isBenefit: true,
-            }
-          ]))
-          totalDebt += price
-        }
+    const prevMonthDate = addMonths(currentDate, -1);
+
+    const processInterval = (datePointer: Date, interval: Interval) => {
+      if (isWithinInterval(datePointer, interval)) {
+        const startDate = interval.start;
+        const formatedStartDate = format(startDate, 'yyyy-MM-dd');
+        const price = benefits[formatedStartDate];
+        setBenefitItems((v) => ([
+          ...v,
+          {
+            date: format(datePointer, 'yyyy-MM-dd'),
+            pay: price,
+            isBenefit: true,
+          }
+        ]));
+        totalDebt += price;
       }
+    }
+
+    while (currentDatePointer < prevMonthDate) {
+      const datePointer = currentDatePointer
+      intervals.forEach((interval) => processInterval(datePointer, interval));
 
       currentDatePointer = addMonths(currentDatePointer, 1);
       if (currentDatePointer > prevMonthDate) {
@@ -89,22 +74,37 @@ export default function HomeScreen() {
     }
 
     return totalDebt;
-  }
+  };
+
+  const setNewData = (newData: CardData[]) => {
+    setItems(newData);
+    saveDataStorage(KEY_DEBTS, newData);
+
+    calcAllDebt(newData);
+  };
+
+  const addNewPay = (date: Date, number: string) => {
+    const newData = [...items, { date: format(date, 'yyyy-MM-dd'), pay: parseFloat(number) }];
+    setNewData(newData);
+  };
+
+  const getIntervals = (data: object): Interval[] => Object.keys(data).map((startDate, index, array) => ({
+    start: parseISO(startDate),
+    end: array[index + 1] ? addDays(parseISO(array[index + 1]), -1) : new Date()
+  }));
 
   const calcAllDebt = (debts: CardData[]) => {
-    const sumAllPayments = debts.reduce((acc, item) => acc + item.pay, 0)
-    const newDispledDebt = allDebt.current - sumAllPayments
-    setDispledDebt(newDispledDebt)
-  }
+    const sumAllPayments = debts.reduce((acc, item) => acc + item.pay, 0);
+    const newDispledDebt = allDebt.current - sumAllPayments;
+    setDispledDebt(newDispledDebt);
+  };
 
   const removePay = (card: CardData) => {
     const filteredItems = items.filter((item) => JSON.stringify(item) !== JSON.stringify(card));
     setNewData(filteredItems);
-  }
+  };
 
-  const getItems = (): CardData[] => {
-    return sortArrayByDate([...benifitItems, ...items])
-  }
+  const getItems = (): CardData[] => sortArrayByDate([...benifitItems, ...items]);
 
   const fetchData = async () => {
     try {
@@ -112,10 +112,10 @@ export default function HomeScreen() {
       setBenefitItems(startData);
       const benefits = await getDataStorage(KEY_BENEFITS);
       if (benefits && !Array.isArray(benefits)) {
-        setSumBenefits(benefits)
-        const intervals = getIntervals(benefits)
+        setSumBenefits(benefits);
+        const intervals = getIntervals(benefits);
 
-        const totalDebt = calcDebt(benefits, intervals)
+        const totalDebt = calcDebt(benefits, intervals);
         setDispledDebt(totalDebt);
         allDebt.current = totalDebt;
 
@@ -130,11 +130,11 @@ export default function HomeScreen() {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
 
   if (isLoading) {
     return (
@@ -151,7 +151,7 @@ export default function HomeScreen() {
           <ActivityIndicator size="large" color={colorTint} />
         </ThemedView>
       </ParallaxScrollView>
-    )
+    );
   }
 
   if (!Object.keys(sumBenefits).length) {
@@ -172,7 +172,7 @@ export default function HomeScreen() {
           }} size={310} name="reload" style={styles.startHeaderIcon} />
         </ThemedView>
       </ParallaxScrollView>
-    )
+    );
   }
 
   return (
@@ -230,7 +230,7 @@ export default function HomeScreen() {
       </ThemedView>
     </ParallaxScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   titleContainer: {
@@ -282,3 +282,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   }
 });
+
+export default HomeScreen;

@@ -4,7 +4,6 @@
  */
 
 import { useColorScheme } from 'react-native';
-
 import { Colors } from '@/constants/Colors';
 
 export function useThemeColor(
@@ -16,7 +15,7 @@ export function useThemeColor(
 
   if (colorFromProps) {
     return colorFromProps;
-  } else {
+  } 
     return Colors[theme][colorName];
-  }
+  
 }
