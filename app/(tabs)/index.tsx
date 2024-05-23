@@ -1,17 +1,20 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { format, parseISO, isWithinInterval, addMonths, addDays } from 'date-fns';
 import * as Crypto from 'expo-crypto';
-import { useState, useEffect, useRef } from 'react';
-import { Image, StyleSheet, SafeAreaView, Button, ActivityIndicator } from 'react-native';
-import Card from '@/components/Card';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Image, StyleSheet, SafeAreaView, Button } from 'react-native';
+import MainCard from '@/components/Card/MainCard';
+import Loading from '@/components/Loading';
 import ModalAddNew from '@/components/ModalAddNew';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
+import StartView from '@/components/StartView';
 import ThemedText from '@/components/ThemedText';
 import ThemedView from '@/components/ThemedView';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Benefit, CardData, Interval } from '@/types';
 import { sortArrayByDate } from '@/utils/common';
+import { CURRENCY } from '@/utils/constants';
 import { KEY_DEBTS, KEY_BENEFITS } from '@/utils/keys-storage';
 import { normalizeMoney } from '@/utils/normalize';
 import { getDataStorage, saveDataStorage } from '@/utils/storage';
@@ -42,7 +45,7 @@ const HomeScreen = () => {
 
   const colorScheme = useColorScheme();
   const colorBtn = Colors[colorScheme ?? 'light'].button;
-  const colorTint = Colors[colorScheme ?? 'light'].tint;
+  const colorHeader = Colors[colorScheme ?? 'light'].headerBackground;
 
   const calcDebt = (benefits: Benefit, intervals: Interval[]) => {
     let currentDatePointer = startDecree;
@@ -91,6 +94,11 @@ const HomeScreen = () => {
     setNewData(newData);
   };
 
+  const removePay = (card: CardData) => {
+    const filteredItems = items.filter((item) => JSON.stringify(item) !== JSON.stringify(card));
+    setNewData(filteredItems);
+  };
+
   const getIntervals = (data: object): Interval[] =>
     Object.keys(data).map((startDate, index, array) => ({
       start: parseISO(startDate),
@@ -101,11 +109,6 @@ const HomeScreen = () => {
     const sumAllPayments = debts.reduce((acc, item) => acc + item.pay, 0);
     const newDispledDebt = allDebt.current - sumAllPayments;
     setDispledDebt(newDispledDebt);
-  };
-
-  const removePay = (card: CardData) => {
-    const filteredItems = items.filter((item) => JSON.stringify(item) !== JSON.stringify(card));
-    setNewData(filteredItems);
   };
 
   const getItems = (): CardData[] => sortArrayByDate([...benifitItems, ...items]);
@@ -140,69 +143,45 @@ const HomeScreen = () => {
     fetchData();
   }, []);
 
+  const headerImage = useMemo(
+    () => <Image source={require('@/assets/images/coins.png')} style={styles.coinsLogo} />,
+    [],
+  );
+
   if (isLoading) {
     return (
-      <ParallaxScrollView
-        headerBackgroundColor={{ light: '#d8dca1', dark: '#6e6909' }}
-        headerImage={<Image source={require('@/assets/images/coins.png')} style={styles.coinsLogo} />}
-      >
-        <ThemedView style={styles.titleContainerColumn}>
-          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>
-            Loading...
-          </ThemedText>
-          <ActivityIndicator size="large" color={colorTint} />
-        </ThemedView>
-      </ParallaxScrollView>
+      <Loading
+        headerImage={headerImage}
+        headerBackgroundColorLight={colorHeader}
+        headerBackgroundColorDark={colorHeader}
+      />
     );
   }
 
   if (!Object.keys(sumBenefits).length) {
     return (
-      <ParallaxScrollView
-        headerBackgroundColor={{ light: '#d8dca1', dark: '#6e6909' }}
-        headerImage={<Image source={require('@/assets/images/coins.png')} style={styles.coinsLogo} />}
-      >
-        <ThemedView style={styles.titleContainerColumn}>
-          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>
-            Benefits should be added first
-          </ThemedText>
-          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>
-            Please, open settings and add
-          </ThemedText>
-          <Ionicons
-            onPress={() => {
-              fetchData();
-            }}
-            size={310}
-            name="reload"
-            style={styles.startHeaderIcon}
-          />
-        </ThemedView>
-      </ParallaxScrollView>
+      <StartView
+        headerImage={headerImage}
+        headerBackgroundColorLight={colorHeader}
+        headerBackgroundColorDark={colorHeader}
+        onClickIcon={fetchData}
+      />
     );
   }
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#d8dca1', dark: '#6e6909' }}
-      headerImage={<Image source={require('@/assets/images/coins.png')} style={styles.coinsLogo} />}
-    >
+    <ParallaxScrollView headerBackgroundColor={{ light: colorHeader, dark: colorHeader }} headerImage={headerImage}>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">{displedDebt.toFixed(2)} BYN</ThemedText>
-        <Ionicons
-          onPress={() => {
-            fetchData();
-          }}
-          size={310}
-          name="reload"
-          style={styles.headerIcon}
-        />
+        <ThemedText type="title">
+          {displedDebt.toFixed(2)} {CURRENCY}
+        </ThemedText>
+        <Ionicons onPress={fetchData} size={310} name="reload" style={styles.headerIcon} />
       </ThemedView>
 
       {isShowModalNew ? (
         <ModalAddNew
           textBtnDataPicker="Select date of receipt"
-          placeholderInput="Select sum pay, BYN"
+          placeholderInput={`Select sum pay, ${CURRENCY}`}
           textSum="Selected sum pay:"
           textBtnClose="Set new pay"
           onClose={(date, number) => {
@@ -220,7 +199,7 @@ const HomeScreen = () => {
 
       <SafeAreaView>
         {getItems().map((item) => (
-          <Card
+          <MainCard
             key={Crypto.randomUUID()}
             date={item.date}
             pay={item.pay}
@@ -242,12 +221,6 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  titleContainerColumn: {
-    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
@@ -276,17 +249,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     fontSize: 22,
-  },
-  startHeaderIcon: {
-    marginTop: 20,
-    color: '#f0ec0c',
-    bottom: 10,
-    right: 5,
-    fontSize: 36,
-  },
-  startTitle: {
-    marginTop: 25,
-    textAlign: 'center',
   },
 });
 

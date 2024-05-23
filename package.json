@@ -11,8 +11,7 @@
     "test": "jest --watchAll",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,scss,md,json}\" --config ./.prettierrc",
-    "prepare": "git config core.hooksPath .git-hooks || echo 'Not in a git repo'"
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,scss,md,json}\" --config ./.prettierrc"
   },
   "jest": {
     "preset": "jest-expo"

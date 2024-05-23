@@ -6,6 +6,7 @@ import ThemedText from '@/components/ThemedText';
 import ThemedView from '@/components/ThemedView';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { CURRENCY } from '@/utils/constants';
 
 type ModalProps = {
   textBtnDataPicker: string;
@@ -19,7 +20,7 @@ type ModalProps = {
 const ModalAddNew = ({ textBtnDataPicker, placeholderInput, textSum, textBtnClose, onClose, onHide }: ModalProps) => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [number, onChangeNumber] = useState('');
+  const [numberValue, onChangeNumberValue] = useState('');
 
   const colorScheme = useColorScheme();
   const colorBtn = Colors[colorScheme ?? 'light'].button;
@@ -52,23 +53,23 @@ const ModalAddNew = ({ textBtnDataPicker, placeholderInput, textSum, textBtnClos
           color: colorText,
         }}
         placeholderTextColor={colorIcon}
-        onChangeText={onChangeNumber}
-        value={number}
+        onChangeText={onChangeNumberValue}
+        value={numberValue}
         placeholder={placeholderInput}
         keyboardType="numeric"
       />
 
-      {number && (
+      {numberValue && (
         <>
           <ThemedView style={styles.selected}>
             <ThemedText>Selected date: {format(date, 'dd.MM.yyyy')}</ThemedText>
             <ThemedText>
-              {textSum} {number} BYN
+              {textSum} {numberValue} {CURRENCY}
             </ThemedText>
           </ThemedView>
 
           <ThemedView style={styles.addButton}>
-            <Button title={textBtnClose} color={colorBtn} onPress={() => onClose(date, number)} />
+            <Button title={textBtnClose} color={colorBtn} onPress={() => onClose(date, numberValue)} />
           </ThemedView>
         </>
       )}

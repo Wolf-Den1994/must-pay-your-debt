@@ -82,7 +82,7 @@
     "react/require-default-props": "off",
     "no-use-before-define": ["error", { "variables": false }],
     "react/prop-types": ["error", { "ignore": ["navigation", "navigation.navigate"] }],
-    "max-lines": ["error", { "max": 500 }],
+    "max-lines": ["error", { "max": 300 }],
     "global-require": "off",
     "react/no-danger": "off"
   },

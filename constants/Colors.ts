@@ -17,6 +17,8 @@ export const Colors = {
     button: '#cdb600',
     secondButton: '#a59c54',
     debt: '#a22',
+    headerBackground: '#d8dca1',
+    headerBackgroundSecond: '#D0D0D0',
   },
   dark: {
     text: '#ECEDEE',
@@ -28,5 +30,7 @@ export const Colors = {
     button: '#d7c000',
     secondButton: '#afa959',
     debt: '#c23c3c',
+    headerBackground: '#6e6909',
+    headerBackgroundSecond: '#353636',
   },
 };

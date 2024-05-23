@@ -2,9 +2,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { format } from 'date-fns';
 import * as Crypto from 'expo-crypto';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Button, SafeAreaView, ActivityIndicator } from 'react-native';
-import BenefitCard from '@/components/BenefitCard';
+import { StyleSheet, Button, SafeAreaView } from 'react-native';
+import BenefitCard from '@/components/Card/BenefitCard';
 import ClearAllStorage from '@/components/ClearAllStorage';
+import Loading from '@/components/Loading';
 import ModalAddNew from '@/components/ModalAddNew';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import ThemedText from '@/components/ThemedText';
@@ -12,6 +13,7 @@ import ThemedView from '@/components/ThemedView';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Benefit } from '@/types';
+import { CURRENCY } from '@/utils/constants';
 import { KEY_BENEFITS } from '@/utils/keys-storage';
 import { normalizeMoney } from '@/utils/normalize';
 import { getDataStorage, saveDataStorage } from '@/utils/storage';
@@ -22,8 +24,8 @@ const TabTwoScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const colorScheme = useColorScheme();
-  const buttonColor = Colors[colorScheme ?? 'light'].button;
-  const colorTint = Colors[colorScheme ?? 'light'].tint;
+  const colorBtn = Colors[colorScheme ?? 'light'].button;
+  const colorHeader = Colors[colorScheme ?? 'light'].headerBackgroundSecond;
 
   const setNewData = (newData: { [x: string]: number }) => {
     setSumBenefits(newData);
@@ -39,9 +41,9 @@ const TabTwoScreen = () => {
   };
 
   const removeBenefit = (startDate: string) => {
-    const copy = { ...sumBenefits };
-    delete copy[startDate];
-    setNewData(copy);
+    const copySumBenefits = { ...sumBenefits };
+    delete copySumBenefits[startDate];
+    setNewData(copySumBenefits);
   };
 
   const fetchData = async () => {
@@ -64,23 +66,17 @@ const TabTwoScreen = () => {
 
   if (isLoading) {
     return (
-      <ParallaxScrollView
-        headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
+      <Loading
         headerImage={<Ionicons size={310} name="settings-outline" style={styles.headerImage} />}
-      >
-        <ThemedView style={styles.titleContainerColumn}>
-          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>
-            Loading...
-          </ThemedText>
-          <ActivityIndicator size="large" color={colorTint} />
-        </ThemedView>
-      </ParallaxScrollView>
+        headerBackgroundColorLight={colorHeader}
+        headerBackgroundColorDark={colorHeader}
+      />
     );
   }
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
+      headerBackgroundColor={{ light: colorHeader, dark: colorHeader }}
       headerImage={<Ionicons size={310} name="settings-outline" style={styles.headerImage} />}
     >
       <ThemedView style={styles.titleContainer}>
@@ -96,7 +92,7 @@ const TabTwoScreen = () => {
                 key={Crypto.randomUUID()}
                 startDate={startDate}
                 sum={sum}
-                onRemoveBenefit={() => removeBenefit(startDate)}
+                onRemoveCard={() => removeBenefit(startDate)}
               />
             ))}
         </SafeAreaView>
@@ -105,7 +101,7 @@ const TabTwoScreen = () => {
       {isShowModalNew ? (
         <ModalAddNew
           textBtnDataPicker="Select start date"
-          placeholderInput="Select sum benefit, BYN"
+          placeholderInput={`Select sum benefit, ${CURRENCY}`}
           textSum="Selected sum benefit:"
           textBtnClose="Set new benefit"
           onClose={(date, number) => {
@@ -117,7 +113,7 @@ const TabTwoScreen = () => {
         />
       ) : (
         <ThemedView style={styles.addButton}>
-          <Button title="Add new benefit" color={buttonColor} onPress={() => setIsShowModalNew(true)} />
+          <Button title="Add new benefit" color={colorBtn} onPress={() => setIsShowModalNew(true)} />
         </ThemedView>
       )}
 
@@ -137,50 +133,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
-  titleContainerColumn: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  titleContainerBenefit: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
   addButton: {
     marginTop: 14,
     cursor: 'pointer',
   },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-  modalAdd: {
-    borderColor: '#687076',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingBottom: 8,
-    paddingTop: 8,
-    paddingLeft: 18,
-    paddingRight: 18,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-  },
   selected: {
     marginTop: 10,
     marginBottom: 10,
-  },
-  startTitle: {
-    marginTop: 25,
-    textAlign: 'center',
   },
   benefits: {
     borderColor: '#687076',
@@ -190,15 +149,10 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingLeft: 8,
     paddingRight: 8,
-
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-  },
-  deleteIcon: {
-    color: '#f0ec0c',
-    fontSize: 16,
   },
 });
 
