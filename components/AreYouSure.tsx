@@ -12,7 +12,7 @@ type AreYouSureProps = {
   textBtnNo: string;
   onClickYes: () => void;
   onClickNo: () => void;
-}
+};
 
 const AreYouSure = ({
   darkColorText,
@@ -23,13 +23,15 @@ const AreYouSure = ({
   textBtnYes,
   textBtnNo,
   onClickYes,
-  onClickNo
+  onClickNo,
 }: AreYouSureProps) => (
-    <>
-      <ThemedText type={typeText} darkColor={darkColorText} lightColor={lightColorText}>Are you sure?</ThemedText>
-      <Button onPress={onClickYes} color={colorBtnYes} title={textBtnYes} />
-      <Button onPress={onClickNo} color={colorBtnNo} title={textBtnNo} />
-    </>
-  );
+  <>
+    <ThemedText type={typeText} darkColor={darkColorText} lightColor={lightColorText}>
+      Are you sure?
+    </ThemedText>
+    <Button onPress={onClickYes} color={colorBtnYes} title={textBtnYes} />
+    <Button onPress={onClickNo} color={colorBtnNo} title={textBtnNo} />
+  </>
+);
 
 export default AreYouSure;

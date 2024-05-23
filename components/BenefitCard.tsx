@@ -12,7 +12,7 @@ type BenefitProps = {
   startDate: string;
   sum: number;
   onRemoveBenefit: () => void;
-}
+};
 
 const BenefitCard = ({ startDate, sum, onRemoveBenefit }: BenefitProps) => {
   const [isShowModalDelete, setIsShowModalNewDelete] = useState(false);
@@ -21,38 +21,33 @@ const BenefitCard = ({ startDate, sum, onRemoveBenefit }: BenefitProps) => {
   const buttonColor = Colors[colorScheme ?? 'light'].button;
   const secondButtonColor = Colors[colorScheme ?? 'light'].secondButton;
 
-  return (
-    isShowModalDelete
-      ? (
-        <ThemedView style={styles.titleContainerBenefit}>
-          <AreYouSure
-            darkColorText={buttonColor}
-            lightColorText={buttonColor}
-            typeText="subtitle"
-            colorBtnYes={buttonColor}
-            colorBtnNo={secondButtonColor}
-            textBtnYes="Yes"
-            textBtnNo="No"
-            onClickYes={onRemoveBenefit}
-            onClickNo={async () => setIsShowModalNewDelete(false)}
-          />
-        </ThemedView>
-      )
-      : (
-        <ThemedView style={styles.titleContainerBenefit}>
-          <ThemedText style={styles.text}>
-            Since
-            <ThemedText type="defaultSemiBold"> {format(startDate, 'dd.MM.yyyy')} </ThemedText>
-            - {sum} BYN
-          </ThemedText>
-          <Ionicons
-            onPress={() => setIsShowModalNewDelete(true)}
-            size={310}
-            name="remove-circle-outline"
-            style={styles.deleteIcon}
-          />
-        </ThemedView>
-      )
+  return isShowModalDelete ? (
+    <ThemedView style={styles.titleContainerBenefit}>
+      <AreYouSure
+        darkColorText={buttonColor}
+        lightColorText={buttonColor}
+        typeText="subtitle"
+        colorBtnYes={buttonColor}
+        colorBtnNo={secondButtonColor}
+        textBtnYes="Yes"
+        textBtnNo="No"
+        onClickYes={onRemoveBenefit}
+        onClickNo={async () => setIsShowModalNewDelete(false)}
+      />
+    </ThemedView>
+  ) : (
+    <ThemedView style={styles.titleContainerBenefit}>
+      <ThemedText style={styles.text}>
+        Since
+        <ThemedText type="defaultSemiBold"> {format(startDate, 'dd.MM.yyyy')} </ThemedText>- {sum} BYN
+      </ThemedText>
+      <Ionicons
+        onPress={() => setIsShowModalNewDelete(true)}
+        size={310}
+        name="remove-circle-outline"
+        style={styles.deleteIcon}
+      />
+    </ThemedView>
   );
 };
 
@@ -70,7 +65,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-  }
+  },
 });
 
 export default BenefitCard;

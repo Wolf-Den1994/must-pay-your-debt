@@ -33,7 +33,7 @@ const TabTwoScreen = () => {
   const addNewBenefit = (date: Date, number: string) => {
     const newData = {
       ...sumBenefits,
-      [format(date, 'yyyy-MM-dd')]: parseFloat(number)
+      [format(date, 'yyyy-MM-dd')]: parseFloat(number),
     };
     setNewData(newData);
   };
@@ -66,19 +66,10 @@ const TabTwoScreen = () => {
     return (
       <ParallaxScrollView
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-        headerImage={<Ionicons
-          size={310}
-          name="settings-outline"
-          style={styles.headerImage} />
-        }
+        headerImage={<Ionicons size={310} name="settings-outline" style={styles.headerImage} />}
       >
         <ThemedView style={styles.titleContainerColumn}>
-          <ThemedText
-            type="title"
-            style={styles.startTitle}
-            darkColor={colorTint}
-            lightColor={colorTint}
-          >
+          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>
             Loading...
           </ThemedText>
           <ActivityIndicator size="large" color={colorTint} />
@@ -90,54 +81,45 @@ const TabTwoScreen = () => {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={<Ionicons
-        size={310}
-        name="settings-outline"
-        style={styles.headerImage}
-      />}
+      headerImage={<Ionicons size={310} name="settings-outline" style={styles.headerImage} />}
     >
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Settings</ThemedText>
       </ThemedView>
 
-      {(Object.keys(sumBenefits).length > 0) && (
+      {Object.keys(sumBenefits).length > 0 && (
         <SafeAreaView style={styles.benefits}>
-          {Object.entries(sumBenefits).reverse().map(([startDate, sum]) => (
-            <BenefitCard
-              key={Crypto.randomUUID()}
-              startDate={startDate}
-              sum={sum}
-              onRemoveBenefit={() => removeBenefit(startDate)}
-            />
-          ))}
+          {Object.entries(sumBenefits)
+            .reverse()
+            .map(([startDate, sum]) => (
+              <BenefitCard
+                key={Crypto.randomUUID()}
+                startDate={startDate}
+                sum={sum}
+                onRemoveBenefit={() => removeBenefit(startDate)}
+              />
+            ))}
         </SafeAreaView>
       )}
 
-      {isShowModalNew
-        ? (
-          <ModalAddNew
-            textBtnDataPicker="Select start date"
-            placeholderInput="Select sum benefit, BYN"
-            textSum="Selected sum benefit:"
-            textBtnClose="Set new benefit"
-            onClose={(date, number) => {
-              const normalizedNumber = normalizeMoney(number);
-              setIsShowModalNew(false);
-              addNewBenefit(date, normalizedNumber);
-            }}
-            onHide={() => setIsShowModalNew(false)}
-          />
-        )
-        : (
-          <ThemedView style={styles.addButton}>
-            <Button
-              title="Add new benefit"
-              color={buttonColor}
-              onPress={() => setIsShowModalNew(true)}
-            />
-          </ThemedView>
-        )
-      }
+      {isShowModalNew ? (
+        <ModalAddNew
+          textBtnDataPicker="Select start date"
+          placeholderInput="Select sum benefit, BYN"
+          textSum="Selected sum benefit:"
+          textBtnClose="Set new benefit"
+          onClose={(date, number) => {
+            const normalizedNumber = normalizeMoney(number);
+            setIsShowModalNew(false);
+            addNewBenefit(date, normalizedNumber);
+          }}
+          onHide={() => setIsShowModalNew(false)}
+        />
+      ) : (
+        <ThemedView style={styles.addButton}>
+          <Button title="Add new benefit" color={buttonColor} onPress={() => setIsShowModalNew(true)} />
+        </ThemedView>
+      )}
 
       <ClearAllStorage />
     </ParallaxScrollView>

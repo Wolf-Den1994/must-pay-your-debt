@@ -14,16 +14,9 @@ type ModalProps = {
   textBtnClose: string;
   onClose: (date: Date, num: string) => void;
   onHide: () => void;
-}
+};
 
-const ModalAddNew = ({
-  textBtnDataPicker,
-  placeholderInput,
-  textSum,
-  textBtnClose,
-  onClose,
-  onHide,
-}: ModalProps) => {
+const ModalAddNew = ({ textBtnDataPicker, placeholderInput, textSum, textBtnClose, onClose, onHide }: ModalProps) => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [number, onChangeNumber] = useState('');
@@ -69,7 +62,9 @@ const ModalAddNew = ({
         <>
           <ThemedView style={styles.selected}>
             <ThemedText>Selected date: {format(date, 'dd.MM.yyyy')}</ThemedText>
-            <ThemedText>{textSum} {number} BYN</ThemedText>
+            <ThemedText>
+              {textSum} {number} BYN
+            </ThemedText>
           </ThemedView>
 
           <ThemedView style={styles.addButton}>
@@ -114,7 +109,7 @@ const styles = StyleSheet.create({
   selected: {
     marginTop: 10,
     marginBottom: 10,
-  }
+  },
 });
 
 export default ModalAddNew;

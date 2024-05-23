@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CardData, Benefit } from '@/types';
 
-export const saveDataStorage = async (key: string, value: CardData[]|Benefit): Promise<void> => {
+export const saveDataStorage = async (key: string, value: CardData[] | Benefit): Promise<void> => {
   try {
     const jsonValue = JSON.stringify(value);
     await AsyncStorage.setItem(key, jsonValue);
@@ -10,7 +10,7 @@ export const saveDataStorage = async (key: string, value: CardData[]|Benefit): P
   }
 };
 
-export const getDataStorage = async (key: string): Promise<null|CardData[]|Benefit> => {
+export const getDataStorage = async (key: string): Promise<null | CardData[] | Benefit> => {
   try {
     const jsonValue = await AsyncStorage.getItem(key);
     return jsonValue != null ? JSON.parse(jsonValue) : null;

@@ -7,15 +7,15 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 type TabIconProps = {
   color: string;
   focused: boolean;
-}
+};
 
 const HomeTabIcon = ({ color, focused }: TabIconProps) => (
   <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-)
+);
 
 const SettingsTabIcon = ({ color, focused }: TabIconProps) => (
   <TabBarIcon name={focused ? 'settings-sharp' : 'settings-outline'} color={color} />
-)
+);
 
 const TabLayout = () => {
   const colorScheme = useColorScheme();
@@ -25,7 +25,8 @@ const TabLayout = () => {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{

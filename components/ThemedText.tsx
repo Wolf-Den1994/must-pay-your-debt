@@ -8,13 +8,7 @@ export type ThemedTextProps = TextProps & {
   type?: TypeText;
 };
 
-const ThemedText = ({
-  style,
-  lightColor,
-  darkColor,
-  type = 'default',
-  ...rest
-}: ThemedTextProps) => {
+const ThemedText = ({ style, lightColor, darkColor, type = 'default', ...rest }: ThemedTextProps) => {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
 
   return (

@@ -16,14 +16,17 @@ import { KEY_DEBTS, KEY_BENEFITS } from '@/utils/keys-storage';
 import { normalizeMoney } from '@/utils/normalize';
 import { getDataStorage, saveDataStorage } from '@/utils/storage';
 
-const startData = [{
-  date: format('2023-07-01', 'yyyy-MM-dd'),
-  pay: 469.15,
-  isBenefit: true,
-}, {
-  date: format('2023-08-01', 'yyyy-MM-dd'),
-  pay: 469.15,
-}];
+const startData = [
+  {
+    date: format('2023-07-01', 'yyyy-MM-dd'),
+    pay: 469.15,
+    isBenefit: true,
+  },
+  {
+    date: format('2023-08-01', 'yyyy-MM-dd'),
+    pay: 469.15,
+  },
+];
 const startDecree = new Date(2023, 7, 1); // 01 Aug 2023
 const currentDate = new Date();
 
@@ -51,20 +54,20 @@ const HomeScreen = () => {
         const startDate = interval.start;
         const formatedStartDate = format(startDate, 'yyyy-MM-dd');
         const price = benefits[formatedStartDate];
-        setBenefitItems((v) => ([
+        setBenefitItems((v) => [
           ...v,
           {
             date: format(datePointer, 'yyyy-MM-dd'),
             pay: price,
             isBenefit: true,
-          }
-        ]));
+          },
+        ]);
         totalDebt += price;
       }
-    }
+    };
 
     while (currentDatePointer < prevMonthDate) {
-      const datePointer = currentDatePointer
+      const datePointer = currentDatePointer;
       intervals.forEach((interval) => processInterval(datePointer, interval));
 
       currentDatePointer = addMonths(currentDatePointer, 1);
@@ -88,10 +91,11 @@ const HomeScreen = () => {
     setNewData(newData);
   };
 
-  const getIntervals = (data: object): Interval[] => Object.keys(data).map((startDate, index, array) => ({
-    start: parseISO(startDate),
-    end: array[index + 1] ? addDays(parseISO(array[index + 1]), -1) : new Date()
-  }));
+  const getIntervals = (data: object): Interval[] =>
+    Object.keys(data).map((startDate, index, array) => ({
+      start: parseISO(startDate),
+      end: array[index + 1] ? addDays(parseISO(array[index + 1]), -1) : new Date(),
+    }));
 
   const calcAllDebt = (debts: CardData[]) => {
     const sumAllPayments = debts.reduce((acc, item) => acc + item.pay, 0);
@@ -140,14 +144,12 @@ const HomeScreen = () => {
     return (
       <ParallaxScrollView
         headerBackgroundColor={{ light: '#d8dca1', dark: '#6e6909' }}
-        headerImage={
-          <Image
-            source={require('@/assets/images/coins.png')}
-            style={styles.coinsLogo}
-          />
-        }>
+        headerImage={<Image source={require('@/assets/images/coins.png')} style={styles.coinsLogo} />}
+      >
         <ThemedView style={styles.titleContainerColumn}>
-          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>Loading...</ThemedText>
+          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>
+            Loading...
+          </ThemedText>
           <ActivityIndicator size="large" color={colorTint} />
         </ThemedView>
       </ParallaxScrollView>
@@ -158,18 +160,23 @@ const HomeScreen = () => {
     return (
       <ParallaxScrollView
         headerBackgroundColor={{ light: '#d8dca1', dark: '#6e6909' }}
-        headerImage={
-          <Image
-            source={require('@/assets/images/coins.png')}
-            style={styles.coinsLogo}
-          />
-        }>
+        headerImage={<Image source={require('@/assets/images/coins.png')} style={styles.coinsLogo} />}
+      >
         <ThemedView style={styles.titleContainerColumn}>
-          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>Benefits should be added first</ThemedText>
-          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>Please, open settings and add</ThemedText>
-          <Ionicons onPress={() => {
-            fetchData();
-          }} size={310} name="reload" style={styles.startHeaderIcon} />
+          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>
+            Benefits should be added first
+          </ThemedText>
+          <ThemedText type="title" style={styles.startTitle} darkColor={colorTint} lightColor={colorTint}>
+            Please, open settings and add
+          </ThemedText>
+          <Ionicons
+            onPress={() => {
+              fetchData();
+            }}
+            size={310}
+            name="reload"
+            style={styles.startHeaderIcon}
+          />
         </ThemedView>
       </ParallaxScrollView>
     );
@@ -178,43 +185,41 @@ const HomeScreen = () => {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#d8dca1', dark: '#6e6909' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/coins.png')}
-          style={styles.coinsLogo}
-        />
-      }>
+      headerImage={<Image source={require('@/assets/images/coins.png')} style={styles.coinsLogo} />}
+    >
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">{displedDebt.toFixed(2)} BYN</ThemedText>
-        <Ionicons onPress={() => {
-          fetchData();
-        }} size={310} name="reload" style={styles.headerIcon} />
+        <Ionicons
+          onPress={() => {
+            fetchData();
+          }}
+          size={310}
+          name="reload"
+          style={styles.headerIcon}
+        />
       </ThemedView>
 
-      {isShowModalNew
-        ? (
-          <ModalAddNew
-            textBtnDataPicker="Select date of receipt"
-            placeholderInput="Select sum pay, BYN"
-            textSum="Selected sum pay:"
-            textBtnClose="Set new pay"
-            onClose={(date, number) => {
-              const normalizedNumber = normalizeMoney(number);
-              setIsShowModalNew(false);
-              addNewPay(date, normalizedNumber);
-            }}
-            onHide={() => setIsShowModalNew(false)}
-          />
-        )
-        : (
-          <ThemedView style={styles.addButton}>
-            <Button title="Add new pay" color={colorBtn} onPress={() => setIsShowModalNew(true)} />
-          </ThemedView>
-        )
-      }
+      {isShowModalNew ? (
+        <ModalAddNew
+          textBtnDataPicker="Select date of receipt"
+          placeholderInput="Select sum pay, BYN"
+          textSum="Selected sum pay:"
+          textBtnClose="Set new pay"
+          onClose={(date, number) => {
+            const normalizedNumber = normalizeMoney(number);
+            setIsShowModalNew(false);
+            addNewPay(date, normalizedNumber);
+          }}
+          onHide={() => setIsShowModalNew(false)}
+        />
+      ) : (
+        <ThemedView style={styles.addButton}>
+          <Button title="Add new pay" color={colorBtn} onPress={() => setIsShowModalNew(true)} />
+        </ThemedView>
+      )}
 
       <SafeAreaView>
-        {getItems().map((item) =>
+        {getItems().map((item) => (
           <Card
             key={Crypto.randomUUID()}
             date={item.date}
@@ -222,11 +227,13 @@ const HomeScreen = () => {
             isBenefit={item.isBenefit}
             onRemoveCard={() => removePay(item)}
           />
-        )}
+        ))}
       </SafeAreaView>
 
       <ThemedView style={styles.startAccout}>
-        <ThemedText type="link" numberOfLines={1}>(Beginning maternal: {format(startDecree, 'dd.MM.yyyy')})</ThemedText>
+        <ThemedText type="link" numberOfLines={1}>
+          (Beginning maternal: {format(startDecree, 'dd.MM.yyyy')})
+        </ThemedText>
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -280,7 +287,7 @@ const styles = StyleSheet.create({
   startTitle: {
     marginTop: 25,
     textAlign: 'center',
-  }
+  },
 });
 
 export default HomeScreen;

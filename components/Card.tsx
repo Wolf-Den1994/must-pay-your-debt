@@ -11,7 +11,7 @@ import ThemedView from './ThemedView';
 
 type CardProps = CardData & {
   onRemoveCard: () => void;
-}
+};
 
 const Card = ({ date, pay, isBenefit, onRemoveCard }: CardProps) => {
   const [isShowModal, setIsShowModal] = useState(false);
@@ -26,50 +26,46 @@ const Card = ({ date, pay, isBenefit, onRemoveCard }: CardProps) => {
   const formatedDate = format(date, 'dd.MM.yyyy');
 
   return (
-    <ThemedView style={{
-      ...styles.card,
-      shadowColor,
-    }}>
-      {isShowModal
-        ? (
-          <AreYouSure
-            darkColorText={buttonColor}
-            lightColorText={buttonColor}
-            typeText="subtitle"
-            colorBtnYes={buttonColor}
-            colorBtnNo={secondButtonColor}
-            textBtnYes="Yes"
-            textBtnNo="No"
-            onClickYes={onRemoveCard}
-            onClickNo={async () => setIsShowModal(false)}
-          />
-        )
-        : (
-          <>
-            <ThemedText
-              type="subtitle"
-              lightColor={isBenefit ? debtColor : tintColor}
-              darkColor={isBenefit ? debtColor : tintColor}
-            >
-              {formatedDate}
-            </ThemedText>
-            {!isBenefit && formatedDate !== '01.08.2023' && (
-              <Ionicons
-                onPress={() => setIsShowModal(true)}
-                size={310}
-                name="remove-circle-outline"
-                style={styles.deleteIcon}
-              />
-            )}
-            <ThemedText
-              lightColor={isBenefit ? debtColor : tintColor}
-              darkColor={isBenefit ? debtColor : tintColor}
-            >
-              {pay} BYN
-            </ThemedText>
-          </>
-        )
-      }
+    <ThemedView
+      style={{
+        ...styles.card,
+        shadowColor,
+      }}
+    >
+      {isShowModal ? (
+        <AreYouSure
+          darkColorText={buttonColor}
+          lightColorText={buttonColor}
+          typeText="subtitle"
+          colorBtnYes={buttonColor}
+          colorBtnNo={secondButtonColor}
+          textBtnYes="Yes"
+          textBtnNo="No"
+          onClickYes={onRemoveCard}
+          onClickNo={async () => setIsShowModal(false)}
+        />
+      ) : (
+        <>
+          <ThemedText
+            type="subtitle"
+            lightColor={isBenefit ? debtColor : tintColor}
+            darkColor={isBenefit ? debtColor : tintColor}
+          >
+            {formatedDate}
+          </ThemedText>
+          {!isBenefit && formatedDate !== '01.08.2023' && (
+            <Ionicons
+              onPress={() => setIsShowModal(true)}
+              size={310}
+              name="remove-circle-outline"
+              style={styles.deleteIcon}
+            />
+          )}
+          <ThemedText lightColor={isBenefit ? debtColor : tintColor} darkColor={isBenefit ? debtColor : tintColor}>
+            {pay} BYN
+          </ThemedText>
+        </>
+      )}
     </ThemedView>
   );
 };
