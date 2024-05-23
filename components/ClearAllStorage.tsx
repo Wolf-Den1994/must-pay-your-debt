@@ -16,7 +16,7 @@ const ClearAllStorage = () => {
   const colorSecBtn = Colors[colorScheme ?? 'light'].secondButton;
 
   const clearAsyncStorage = async () => {
-    clearAllStorage();
+    await clearAllStorage();
     setIsShowModal(false);
     setShouldReload(true);
   };
@@ -44,7 +44,7 @@ const ClearAllStorage = () => {
             textBtnYes="YES"
             textBtnNo=">NOOO!<"
             onClickYes={clearAsyncStorage}
-            onClickNo={async () => setIsShowModal(false)}
+            onClickNo={() => setIsShowModal(false)}
           />
           <ThemedText type="defaultSemiBold">After need reload app!</ThemedText>
         </ThemedView>
