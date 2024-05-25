@@ -6,6 +6,7 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { clearAllStorage } from '@/utils/storage';
 import AreYouSure from './AreYouSure';
+import ShouldReload from './ShouldReload';
 
 const ClearAllStorage = () => {
   const [isShowModal, setIsShowModal] = useState(false);
@@ -22,13 +23,7 @@ const ClearAllStorage = () => {
   };
 
   if (shouldReload) {
-    return (
-      <ThemedView style={styles.addButton}>
-        <ThemedText type="title" darkColor="#a22" lightColor="#a22">
-          NEED RELOAD!
-        </ThemedText>
-      </ThemedView>
-    );
+    return <ShouldReload />;
   }
 
   return (

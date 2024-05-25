@@ -34,7 +34,7 @@ const startDecree = new Date(2023, 7, 1); // 01 Aug 2023
 const currentDate = new Date();
 
 const HomeScreen = () => {
-  const [items, setItems] = useState<CardData[]>([]);
+  const [debts, setItems] = useState<CardData[]>([]);
   const [displedDebt, setDispledDebt] = useState<number>(0);
   const [isShowModalNew, setIsShowModalNew] = useState(false);
   const [sumBenefits, setSumBenefits] = useState<Benefit>({});
@@ -90,12 +90,12 @@ const HomeScreen = () => {
   };
 
   const addNewPay = (date: Date, number: string) => {
-    const newData = [...items, { date: format(date, 'yyyy-MM-dd'), pay: parseFloat(number) }];
+    const newData = [...debts, { date: format(date, 'yyyy-MM-dd'), pay: parseFloat(number) }];
     setNewData(newData);
   };
 
   const removePay = (card: CardData) => {
-    const filteredItems = items.filter((item) => JSON.stringify(item) !== JSON.stringify(card));
+    const filteredItems = debts.filter((item) => JSON.stringify(item) !== JSON.stringify(card));
     setNewData(filteredItems);
   };
 
@@ -105,13 +105,13 @@ const HomeScreen = () => {
       end: array[index + 1] ? addDays(parseISO(array[index + 1]), -1) : new Date(),
     }));
 
-  const calcAllDebt = (debts: CardData[]) => {
-    const sumAllPayments = debts.reduce((acc, item) => acc + item.pay, 0);
+  const calcAllDebt = (items: CardData[]) => {
+    const sumAllPayments = items.reduce((acc, item) => acc + item.pay, 0);
     const newDispledDebt = allDebt.current - sumAllPayments;
     setDispledDebt(newDispledDebt);
   };
 
-  const getItems = (): CardData[] => sortArrayByDate([...benifitItems, ...items]);
+  const getItems = (): CardData[] => sortArrayByDate([...benifitItems, ...debts]);
 
   const fetchData = async () => {
     try {
@@ -126,10 +126,10 @@ const HomeScreen = () => {
         setDispledDebt(totalDebt);
         allDebt.current = totalDebt;
 
-        const debts = await getDataStorage(KEY_DEBTS);
-        if (debts && Array.isArray(debts)) {
-          setItems(debts);
-          calcAllDebt(debts);
+        const debtsData = await getDataStorage(KEY_DEBTS);
+        if (debtsData && Array.isArray(debtsData)) {
+          setItems(debtsData);
+          calcAllDebt(debtsData);
         }
       }
     } catch (err) {

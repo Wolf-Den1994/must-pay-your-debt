@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import * as Crypto from 'expo-crypto';
 import { useState, useEffect } from 'react';
 import { StyleSheet, Button, SafeAreaView } from 'react-native';
+import Backup from '@/components/Backup';
 import BenefitCard from '@/components/Card/BenefitCard';
 import ClearAllStorage from '@/components/ClearAllStorage';
 import Loading from '@/components/Loading';
@@ -118,6 +119,7 @@ const TabTwoScreen = () => {
       )}
 
       <ClearAllStorage />
+      <Backup sumBenefits={sumBenefits} />
     </ParallaxScrollView>
   );
 };
