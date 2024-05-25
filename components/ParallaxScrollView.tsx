@@ -32,7 +32,7 @@ const ParallaxScrollView = ({ children, headerImage, headerBackgroundColor }: Pr
 
   return (
     <ThemedView style={styles.container}>
-      <Animated.ScrollView ref={scrollRef} scrollEventThrottle={16}>
+      <Animated.ScrollView ref={scrollRef} scrollEventThrottle={16} keyboardShouldPersistTaps="handled">
         <Animated.View
           style={[styles.header, { backgroundColor: headerBackgroundColor[colorScheme] }, headerAnimatedStyle]}
         >
