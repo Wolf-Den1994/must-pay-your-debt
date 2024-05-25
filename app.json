@@ -24,7 +24,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#f6f6f6"
-      }
+      },
+      "package": "com.wolfden.mustpayyourdebt"
     },
     "web": {
       "bundler": "metro",
