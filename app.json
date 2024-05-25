@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Must pay your debt",
-    "slug": "Must pay your debt",
+    "slug": "must-pay-your-debt",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

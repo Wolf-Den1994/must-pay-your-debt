@@ -11,7 +11,8 @@
     "test": "jest --watchAll",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,scss,md,json}\" --config ./.prettierrc"
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,css,scss,md,json}\" --config ./.prettierrc",
+    "build:apk": "eas build -p android --profile preview"
   },
   "jest": {
     "preset": "jest-expo"
