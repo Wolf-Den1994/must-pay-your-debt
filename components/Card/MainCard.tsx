@@ -35,14 +35,17 @@ const Card = ({ date, pay, isBenefit, onRemoveCard }: CardProps) => {
         <AreYouSureWrap onClickYes={onRemoveCard} onClickNo={() => setIsShowModal(false)} />
       ) : (
         <>
-          <ThemedText
-            type="subtitle"
-            lightColor={isBenefit ? debtColor : tintColor}
-            darkColor={isBenefit ? debtColor : tintColor}
-          >
-            {formatedDate}
-          </ThemedText>
-          {!isBenefit && formatedDate !== '01.08.2023' && <DeleteIcon onClick={() => setIsShowModal(true)} />}
+          <ThemedView style={styles.paidBlock}>
+            <ThemedText
+              type="subtitle"
+              lightColor={isBenefit ? debtColor : tintColor}
+              darkColor={isBenefit ? debtColor : tintColor}
+              style={styles.date}
+            >
+              {formatedDate}
+            </ThemedText>
+            {!isBenefit && formatedDate !== '01.08.2023' && <DeleteIcon onClick={() => setIsShowModal(true)} />}
+          </ThemedView>
           <ThemedText lightColor={isBenefit ? debtColor : tintColor} darkColor={isBenefit ? debtColor : tintColor}>
             {pay} {CURRENCY}
           </ThemedText>
@@ -76,6 +79,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: 53,
   },
+  paidBlock: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  date: {
+    marginRight: 32,
+  }
 });
 
 export default Card;
