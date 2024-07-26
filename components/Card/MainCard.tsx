@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
   date: {
     marginRight: 32,
-  }
+  },
 });
 
 export default Card;
