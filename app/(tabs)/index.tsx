@@ -1,4 +1,3 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { format, parseISO, isWithinInterval, addMonths, addDays } from 'date-fns';
 import * as Crypto from 'expo-crypto';
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -170,12 +169,15 @@ const HomeScreen = () => {
   }
 
   return (
-    <ParallaxScrollView headerBackgroundColor={{ light: colorHeader, dark: colorHeader }} headerImage={headerImage}>
+    <ParallaxScrollView
+      headerBackgroundColor={{ light: colorHeader, dark: colorHeader }}
+      headerImage={headerImage}
+      onRefresh={fetchData}
+    >
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">
           {displedDebt.toFixed(2)} {CURRENCY}
         </ThemedText>
-        <Ionicons onPress={fetchData} size={310} name="reload" style={styles.headerIcon} />
       </ThemedView>
 
       {isShowModalNew ? (
@@ -240,15 +242,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flexDirection: 'column',
     alignItems: 'flex-end',
-  },
-  headerIcon: {
-    color: '#f0ec0c',
-    bottom: 10,
-    right: 5,
-    position: 'absolute',
-    width: 20,
-    height: 20,
-    fontSize: 22,
   },
 });
 
