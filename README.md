@@ -48,3 +48,17 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Deploy
+1. Login in site https://expo.dev/
+2. Remove old build
+3. Run
+```shell
+eas build -p android --profile preview
+```
+4. If need run before p.3
+```shell
+eas login
+```
+5. Open site `expo` and wait
+6. After build you can download apk
