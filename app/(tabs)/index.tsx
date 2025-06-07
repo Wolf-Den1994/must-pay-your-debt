@@ -49,7 +49,7 @@ const HomeScreen = () => {
   const calcDebt = (benefits: Benefit, intervals: Interval[]) => {
     let currentDatePointer = startDecree;
     let totalDebt = 0;
-    const currentMonthDate = addMonths(currentDate, 0);
+    const prevMonthDate = addMonths(currentDate, -1);
 
     const processInterval = (datePointer: Date, interval: Interval) => {
       if (isWithinInterval(datePointer, interval)) {
@@ -68,13 +68,13 @@ const HomeScreen = () => {
       }
     };
 
-    while (currentDatePointer < currentMonthDate) {
+    while (currentDatePointer < prevMonthDate) {
       const datePointer = currentDatePointer;
       intervals.forEach((interval) => processInterval(datePointer, interval));
 
       currentDatePointer = addMonths(currentDatePointer, 1);
-      if (currentDatePointer > currentMonthDate) {
-        currentDatePointer = currentMonthDate;
+      if (currentDatePointer > prevMonthDate) {
+        currentDatePointer = prevMonthDate;
       }
     }
 
