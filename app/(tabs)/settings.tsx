@@ -62,7 +62,7 @@ const TabTwoScreen = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchData().catch(console.error);
   }, []);
 
   if (isLoading) {

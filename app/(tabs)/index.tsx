@@ -34,10 +34,10 @@ const currentDate = new Date();
 
 const HomeScreen = () => {
   const [debts, setItems] = useState<CardData[]>([]);
-  const [displedDebt, setDispledDebt] = useState<number>(0);
+  const [displayedDebt, setDisplayedDebt] = useState<number>(0);
   const [isShowModalNew, setIsShowModalNew] = useState(false);
   const [sumBenefits, setSumBenefits] = useState<Benefit>({});
-  const [benifitItems, setBenefitItems] = useState<CardData[]>(startData);
+  const [benefitItems, setBenefitItems] = useState<CardData[]>(startData);
   const [isLoading, setIsLoading] = useState(true);
 
   const allDebt = useRef(0);
@@ -106,11 +106,11 @@ const HomeScreen = () => {
 
   const calcAllDebt = (items: CardData[]) => {
     const sumAllPayments = items.reduce((acc, item) => acc + item.pay, 0);
-    const newDispledDebt = allDebt.current - sumAllPayments;
-    setDispledDebt(newDispledDebt);
+    const newDisplayedDebt = allDebt.current - sumAllPayments;
+    setDisplayedDebt(newDisplayedDebt);
   };
 
-  const getItems = (): CardData[] => sortArrayByDate([...benifitItems, ...debts]);
+  const getItems = (): CardData[] => sortArrayByDate([...benefitItems, ...debts]);
 
   const fetchData = async () => {
     try {
@@ -122,7 +122,7 @@ const HomeScreen = () => {
         const intervals = getIntervals(benefits);
 
         const totalDebt = calcDebt(benefits, intervals);
-        setDispledDebt(totalDebt);
+        setDisplayedDebt(totalDebt);
         allDebt.current = totalDebt;
 
         const debtsData = await getDataStorage(KEY_DEBTS);
@@ -139,7 +139,7 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchData().catch(console.error);
   }, []);
 
   const headerImage = useMemo(
@@ -176,7 +176,7 @@ const HomeScreen = () => {
     >
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">
-          {displedDebt.toFixed(2)} {CURRENCY}
+          {displayedDebt.toFixed(2)} {CURRENCY}
         </ThemedText>
       </ThemedView>
 
@@ -211,7 +211,7 @@ const HomeScreen = () => {
         ))}
       </SafeAreaView>
 
-      <ThemedView style={styles.startAccout}>
+      <ThemedView style={styles.startAccount}>
         <ThemedText type="link" numberOfLines={1}>
           (Beginning maternal: {format(startDecree, 'dd.MM.yyyy')})
         </ThemedText>
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     cursor: 'pointer',
   },
-  startAccout: {
+  startAccount: {
     marginTop: 20,
     flexDirection: 'column',
     alignItems: 'flex-end',
