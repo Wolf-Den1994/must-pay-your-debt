@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CardData, Benefit } from '@/types';
 
-export const saveDataStorage = async (key: string, value: CardData[] | Benefit): Promise<void> => {
+export const saveDataStorage = (key: string, value: CardData[] | Benefit): void => {
   try {
     const jsonValue = JSON.stringify(value);
-    await AsyncStorage.setItem(key, jsonValue);
+    AsyncStorage.setItem(key, jsonValue).catch(console.error);
   } catch (e) {
     console.error(e);
   }

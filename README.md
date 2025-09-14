@@ -56,9 +56,9 @@ Join our community of developers creating universal apps.
 ```shell
 eas build -p android --profile preview
 ```
-4. If need run before p.3
+4. If you need run before p.3
 ```shell
 eas login
 ```
 5. Open site `expo` and wait
-6. After build you can download apk
+6. After, build you can download apk
